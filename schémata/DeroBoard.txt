@@ -1,0 +1,3 @@
+Rozměr desky DeroBoard je 25x25mm (má 20 pinu je třeba 20 pin dupont)
+Displej má rozměr 80x36mm
+Deska koupebá

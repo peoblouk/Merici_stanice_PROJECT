@@ -1,0 +1,14 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "binaryPath": "/usr/bin/make",
+            "binaryArgs": [
+                "flash"
+            ]
+        }
+    ],
+    "files.associations": {
+        "milis.h": "c",
+        "stm8s_conf.h": "c"
+    }
+}
