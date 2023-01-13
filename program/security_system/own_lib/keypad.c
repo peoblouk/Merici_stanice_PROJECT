@@ -92,8 +92,8 @@ uint8_t check_keypad(void)
     return key;
 }
 
-/* const Keypad_module keypad = {
+const Keypad_module keypad = {
     .init = init_keypad,
     .check = check_keypad,
-}; */
+};
 /*****************************END OF FILE****/

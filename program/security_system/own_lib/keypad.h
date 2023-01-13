@@ -11,12 +11,12 @@
 #ifndef __KEYPAD_H__
 #define __KEYPAD_H__
 
-/* typedef struct
+typedef struct
 {
     void (*init)(void);
     uint8_t (*check)(void);
 
-} Keypad_module; */
+} Keypad_module;
 
 // sloupce
 #define C1_PORT GPIOD
@@ -25,10 +25,6 @@
 #define C2_PIN PIN_7
 #define C3_PORT GPIOF
 #define C3_PIN PIN_6
-
-// if you have 4x4 you can use this
-// #define C4_PORT GPIOD
-// #define C4_PIN  PIN_1
 
 // řádky
 #define R1_PORT GPIOB
@@ -49,7 +45,6 @@
 
 void init_keypad(void);
 uint8_t check_keypad(void);
-
-// extern const Keypad_module keypad;
+extern const Keypad_module keypad;
 
 #endif /* __KEYPAD_H__*/

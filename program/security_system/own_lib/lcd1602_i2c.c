@@ -51,19 +51,19 @@ void LiquidCrystal_I2C_Init(uint8_t address, uint8_t cols, uint8_t rows)
     SDA = GPIO_Init(GPIOE, PIN_2, OUTPUT_PP_HIGH_FAST);
     SCL = GPIO_Init(GPIOE, PIN_1, OUTPUT_PP_HIGH_FAST);
 
-    I2C_Init(100000, 0x00, I2C_DUTYCYCLE_2, I2C_ACK_CURR, I2C_ADDMODE_7BIT, CLK.getFrequency() / 1000000);
+    I2C_Init(100000, 0x00, I2C_DUTYCYCLE_2, I2C_ACK_CURR, I2C_ADDMODE_7BIT, CLK_GetClockFreq / 1000000);
     //! CLK_GETFREQ
-    I2C_CMmd(ENABLE);
+    I2C_Cmd(ENABLE);
 
-    delay_ms(50);
+    delay.ms(50);
     LCD.expanderWrite(_lcd_backlight);
-    delay_ms(1000);
+    delay.ms(1000);
     LCD.write4bits(0x03 << 4);
-    delay_us(4500);
+    delay.us(4500);
     LCD.write4bits(0x03 << 4);
-    delay_us(4500);
+    delay.us(4500);
     LCD.write4bits(0x03 << 4);
-    delay_us(150);
+    delay.us(150);
     LCD.write4bits(0x02 << 4);
     LCD.command(LCD_FUNCTIONSET | _lcd_displayfunction);
     _lcd_displaycontrol = LCD_DISPLAYON;
@@ -111,10 +111,10 @@ void LiquidCrystal_I2C_Write4Bits(uint8_t data)
 void LiquidCrystal_I2C_PulseEnable(uint8_t data)
 {
     LCD.expanderWrite(data | En);
-    delay_us(1);
+    delay.us(1);
 
     LCD.expanderWrite(data & ~En);
-    delay_us(50);
+    delay.us(50);
 }
 
 void LiquidCrystal_I2C_Command(uint8_t data)
@@ -139,13 +139,13 @@ void LiquidCrystal_I2C_Display()
 void LiquidCrystal_I2C_Clear()
 {
     LCD.command(LCD_CLEARDISPLAY);
-    delay_us(2000);
+    delay.us(2000);
 }
 
 void LiquidCrystal_I2C_Home()
 {
     LCD.command(LCD_RETURNHOME);
-    delay_us(2000);
+    delay.us(2000);
 }
 
 void LiquidCrystal_I2C_NoBacklight()

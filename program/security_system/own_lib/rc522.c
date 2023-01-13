@@ -1,11 +1,18 @@
-#include "loc_rc522.h"
+/**
+ * @author [Petr Oblouk]
+ * @github [https://github.com/peoblouk]
+ * @create date 12-01-2023 - 18:34:16
+ * @modify date 12-01-2023 - 18:34:16
+ * @desc [RFID RC522 library]
+ */
+#include "rc522.h"
 #include "stm8s.h"
 ///////////////////////////////////////////######################################
-#define CS_H GPIO_WriteHigh(GPIOC, PIN_4)
-#define CS_L GPIO_WriteLow(GPIOC, PIN_4)
+#define CS_H GPIO_WriteHigh(RFID_522_PORT, RFID_522_CS)
+#define CS_L GPIO_WriteLow(RFID_522_PORT, RFID_522_CS)
 ///////////////////
 unsigned char serNum[5];
-void delay(long x);
+
 /////////////////////////////
 void RC522_Init(void)
 {
@@ -13,7 +20,7 @@ void RC522_Init(void)
   CLK_PeripheralClockConfig(CLK_PERIPHERAL_SPI, ENABLE);
 
   /* Set the MOSI,MISO and SCK at high level */
-  GPIO_ExternalPullUpConfig(GPIOC, (GPIO_Pin_TypeDef)(PIN_7 | PIN_6 | PIN_5), ENABLE);
+  GPIO_ExternalPullUpConfig(RFID_522_PORT, (GPIO_Pin_TypeDef)(RFID_522_MISO | RFID_522_MOSI | RFID_522_SCK), ENABLE);
 
   /* SD_SPI Configuration */
   SPI_Init(SPI_FIRSTBIT_MSB, SPI_BAUDRATEPRESCALER_4, SPI_MODE_MASTER,
@@ -24,11 +31,11 @@ void RC522_Init(void)
   SPI_Cmd(ENABLE);
 
   /* Set MSD ChipSelect pin in Output push-pull high level */
-  GPIO_Init(GPIOC, PIN_4, GPIO_MODE_OUT_PP_HIGH_SLOW);
-  GPIO_WriteHigh(GPIOC, PIN_4); // CS
+  GPIO_Init(RFID_522_PORT, RFID_522_CS, GPIO_MODE_OUT_PP_HIGH_SLOW);
+  GPIO_WriteHigh(RFID_522_PORT, RFID_522_CS); // CS
   // RST
-  GPIO_Init(GPIOC, PIN_3, GPIO_MODE_OUT_PP_HIGH_SLOW); // RST
-  GPIO_WriteHigh(GPIOC, PIN_3);
+  GPIO_Init(RFID_522_PORT, RFID_522_RST, GPIO_MODE_OUT_PP_HIGH_SLOW); // RST
+  GPIO_WriteHigh(RFID_522_PORT, RFID_522_RST);
 }
 /////////////////////////////////############################
 #define MAXRLEN 18
@@ -429,15 +436,15 @@ char PcdReset(void)
 {
   // MF522_RST=1;
   MF522_RST_H;
-  // __no_operation();
+  nop();
   // MF522_RST=0;
   MF522_RST_L;
-  // __no_operation();
+  nop();
   // MF522_RST=1;
   MF522_RST_H;
-  // __no_operation();
+  nop();
   WriteRawRC(CommandReg, PCD_RESETPHASE);
-  // __no_operation();
+  nop();
 
   //    WriteRawRC(TModeReg,0x80);
   //    WriteRawRC(ModeReg,0x3D);            //?Mifare???,CRC???0x6363
@@ -733,18 +740,18 @@ unsigned char ReadRawRC(unsigned char Address)
 ////////////////////////////////////
 void Init_spi_software(void)
 {
-  GPIO_Init(GPIOC, PIN_7, GPIO_MODE_IN_PU_NO_IT);      // MISO
-  GPIO_Init(GPIOC, PIN_6, GPIO_MODE_OUT_PP_HIGH_SLOW); // MOSI
-  GPIO_Init(GPIOC, PIN_5, GPIO_MODE_OUT_PP_HIGH_SLOW); // SCK
+  GPIO_Init(RFID_522_PORT, RFID_522_MISO, GPIO_MODE_IN_PU_NO_IT);      // MISO
+  GPIO_Init(RFID_522_PORT, RFID_522_MOSI, GPIO_MODE_OUT_PP_HIGH_SLOW); // MOSI
+  GPIO_Init(RFID_522_PORT, RFID_522_SCK, GPIO_MODE_OUT_PP_HIGH_SLOW);  // SCK
   ///
-  GPIO_Init(GPIOC, PIN_4, GPIO_MODE_OUT_PP_HIGH_SLOW); // CS
-  GPIO_WriteHigh(GPIOC, PIN_4);                        // CS
+  GPIO_Init(RFID_522_PORT, RFID_522_CS, GPIO_MODE_OUT_PP_HIGH_SLOW); // CS
+  GPIO_WriteHigh(RFID_522_PORT, RFID_522_CS);                        // CS
   // RST
-  GPIO_Init(GPIOC, PIN_3, GPIO_MODE_OUT_PP_HIGH_SLOW); // RST
-  GPIO_WriteHigh(GPIOC, PIN_3);                        // RST
+  GPIO_Init(RFID_522_PORT, RFID_522_RST, GPIO_MODE_OUT_PP_HIGH_SLOW); // RST
+  GPIO_WriteHigh(RFID_522_PORT, RFID_522_RST);                        // RST
 }
 ////////////////////////////////////
-void delay(long x)
+void delay.cycles(long x)
 {
   while (x--)
   {
@@ -756,22 +763,27 @@ void SPIRC522_Init(void)
 {
   CLK_PeripheralClockConfig(CLK_PERIPHERAL_SPI, ENABLE);
 
-  GPIO_ExternalPullUpConfig(GPIOC, (GPIO_Pin_TypeDef)(PIN_7 | PIN_6 | PIN_5), ENABLE);
+  GPIO_ExternalPullUpConfig(RFID_522_PORT, (GPIO_Pin_TypeDef)(RFID_522_MISO | RFID_522_MOSI | RFID_522_SCK), ENABLE);
   ///
-  GPIO_Init(GPIOC, PIN_4, GPIO_MODE_OUT_PP_HIGH_SLOW); // CS
-  GPIO_WriteHigh(GPIOC, PIN_4);                        // CS
+  GPIO_Init(RFID_522_PORT, RFID_522_CS, GPIO_MODE_OUT_PP_HIGH_SLOW); // CS
+  GPIO_WriteHigh(RFID_522_PORT, RFID_522_CS);                        // CS
   // RST
-  GPIO_Init(GPIOC, PIN_3, GPIO_MODE_OUT_PP_HIGH_SLOW); // RST
-  GPIO_WriteHigh(GPIOC, PIN_3);                        // RST
+  GPIO_Init(RFID_522_PORT, RFID_522_RST, GPIO_MODE_OUT_PP_HIGH_SLOW); // RST
+  GPIO_WriteHigh(RFID_522_PORT, RFID_522_RST);                        // RST
   /* Initialize SPI in Slave mode  */
   SPI_DeInit();
   ///
   SPI_Init(SPI_FIRSTBIT_MSB, SPI_BAUDRATEPRESCALER_2, SPI_MODE_MASTER, SPI_CLOCKPOLARITY_LOW,
            SPI_CLOCKPHASE_1EDGE, SPI_DATADIRECTION_2LINES_FULLDUPLEX, SPI_NSS_SOFT, (uint8_t)0x07);
 
-  delay(0xfff);
+  delay.cycles(0xfff);
   /* Enable the SPI*/
   SPI_Cmd(ENABLE);
   ///
 }
+
+const RC522_module rfid = {
+    .init = RC522_Init,
+    .value = PcdValue,
+};
 /////////////////
