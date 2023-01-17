@@ -1,36 +1,22 @@
 {
-    "env": {
-        "myDefaultIncludePath": [
-            "${workspaceFolder}",
-            "${workspaceFolder}/inc"
-        ],
-        "myCompilerPath": "/usr/bin/sdcc"
-    },
     "configurations": [
         {
             "name": "STM8",
             "includePath": [
-                "${workspaceFolder}/inc",
-                "${workspaceFolder}/src",
-                "${workspaceFolder}/../SPL/inc/",
-                "${workspaceFolder}/SPL/inc/"
+                "${workspaceFolder}/**",
+                "C:/Program Files/SDCC/include/**",
+                "app/inc/**",
+                "lib/SPL/inc/**"
             ],
             "defines": [
-                "STM8S",
+                "STM8S103",
+                "USE_STDPERIPH_DRIVER",
                 "_SDCC_"
             ],
-            "compilerPath": "/usr/bin/sdcc",
+            "compilerPath": "C:/ProgramData/chocolatey/bin/gcc.exe",
             "cStandard": "c99",
             "cppStandard": "c++11",
-            "intelliSenseMode": "gcc-x64",
-            "compilerArgs": [
-                "-I inc",
-                "-I SPL/inc",
-                "-I ../SPL/inc",
-                "-mstm8",
-                "-lstm8",
-                "--std-sdcc99"
-            ]
+            "intelliSenseMode": "gcc-x64"
         }
     ],
     "version": 4

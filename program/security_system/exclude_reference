@@ -29,3 +29,20 @@
 -x _TIM3_CAP_COM_IRQHandler
 -x _TIM4_TimeBaseInit
 -x _TIM4_UPD_OVF_IRQHandler
+
+-x _delay
+-x _delay_init
+-x _delay_cycles
+-x _delay_ms
+-x _delay_us
+
+-x _Serial
+-x _Serial_print_string
+-x _Serial_print_char
+-x _Serial_newline
+-x _Serial_check
+-x _Serial_begin
+-x _Serial_print_int
+-x _Serial_read_char
+-x _HSIDivFactor
+-x _UART1_ReceiveData8
