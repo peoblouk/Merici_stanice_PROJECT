@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "delay.h": "c",
-        "stdio.h": "c",
-        "stm8s.h": "c",
-        "stm8s_conf.h": "c"
-    }
-}
