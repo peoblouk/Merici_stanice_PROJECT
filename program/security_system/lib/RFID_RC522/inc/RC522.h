@@ -2,6 +2,31 @@
 #include "stm8s.h"
 #include "delay.h"
 /////////////////////////////////////////////////////////////////////
+//? User pins
+/////////////////////////////////////////////////////////////////////
+#define CHIP_SELECT_PORT GPIOC     // SPI chip sleect port
+#define CHIP_SELECT_PIN GPIO_PIN_4 // SPI chip select pin
+
+#define SPI_PORT GPIOC      // SPI port
+#define SPI_RST GPIO_PIN_3  // SPI RST
+#define SPI_SCK GPIO_PIN_5  // SPI SCK
+#define SPI_MOSI GPIO_PIN_6 // SPI MOSI
+#define SPI_MISO GPIO_PIN_7 // SPI MISO
+
+#define CS_H GPIO_WriteHigh(CHIP_SELECT_PORT, CHIP_SELECT_PIN)
+#define CS_L GPIO_WriteLow(CHIP_SELECT_PORT, CHIP_SELECT_PIN)
+
+#define MF522_SCK_H GPIO_WriteHigh(SPI_PORT, SPI_SCK)
+#define MF522_SCK_L GPIO_WriteLow(SPI_PORT, SPI_SCK)
+
+#define MF522_MISO GPIO_ReadInputData(SPI_PORT)
+
+#define MF522_MOSI_H GPIO_WriteHigh(SPI_PORT, SPI_MOSI)
+#define MF522_MOSI_L GPIO_WriteLow(SPI_PORT, SPI_MOSI)
+
+#define MF522_RST_H GPIO_WriteHigh(SPI_PORT, SPI_RST)
+#define MF522_RST_L GPIO_WriteLow(SPI_PORT, SPI_RST)
+/////////////////////////////////////////////////////////////////////
 char PcdReset(void);
 void PcdAntennaOn(void);
 void PcdAntennaOff(void);
@@ -25,8 +50,10 @@ unsigned char ReadRawRC(unsigned char Address);
 void SetBitMask(unsigned char reg, unsigned char mask);
 void ClearBitMask(unsigned char reg, unsigned char mask);
 
+void dec_to_hex(unsigned int dec);
+
 /////////////////////////////////////////////////////////////////////
-// MF522???
+//? MF522
 /////////////////////////////////////////////////////////////////////
 #define PCD_IDLE 0x00       //??????
 #define PCD_AUTHENT 0x0E    //????
@@ -37,7 +64,7 @@ void ClearBitMask(unsigned char reg, unsigned char mask);
 #define PCD_CALCCRC 0x03    // CRC??
 
 /////////////////////////////////////////////////////////////////////
-// Mifare_One?????
+//? Mifare_One
 /////////////////////////////////////////////////////////////////////
 #define PICC_REQIDL 0x26    //????????????
 #define PICC_REQALL 0x52    //????????
@@ -49,19 +76,18 @@ void ClearBitMask(unsigned char reg, unsigned char mask);
 #define PICC_WRITE 0xA0     //??
 #define PICC_DECREMENT 0xC0 //??
 #define PICC_INCREMENT 0xC1 //??
-#define PICC_RESTORE 0xC2   //????????
-#define PICC_TRANSFER 0xB0  //????????
+#define PICC_RESTORE 0xC2   //??
+#define PICC_TRANSFER 0xB0  //??
 #define PICC_HALT 0x50      //??
 
 /////////////////////////////////////////////////////////////////////
-// MF522 FIFO????
+//? MF522 FIFO
 /////////////////////////////////////////////////////////////////////
 #define DEF_FIFO_LENGTH 64 // FIFO size=64byte
-
 /////////////////////////////////////////////////////////////////////
-// MF522?????
+//? MF522
 /////////////////////////////////////////////////////////////////////
-// PAGE 0
+//! PAGE 0
 #define RFU00 0x00
 #define CommandReg 0x01
 #define ComIEnReg 0x02
@@ -78,7 +104,8 @@ void ClearBitMask(unsigned char reg, unsigned char mask);
 #define BitFramingReg 0x0D
 #define CollReg 0x0E
 #define RFU0F 0x0F
-// PAGE 1
+
+//! PAGE 1
 #define RFU10 0x10
 #define ModeReg 0x11
 #define TxModeReg 0x12
@@ -95,7 +122,8 @@ void ClearBitMask(unsigned char reg, unsigned char mask);
 #define RFU1D 0x1D
 #define RFU1E 0x1E
 #define SerialSpeedReg 0x1F
-// PAGE 2
+
+//! PAGE 2
 #define RFU20 0x20
 #define CRCResultRegM 0x21
 #define CRCResultRegL 0x22
@@ -112,7 +140,8 @@ void ClearBitMask(unsigned char reg, unsigned char mask);
 #define TReloadRegL 0x2D
 #define TCounterValueRegH 0x2E
 #define TCounterValueRegL 0x2F
-// PAGE 3
+
+//! PAGE 3
 #define RFU30 0x30
 #define TestSel1Reg 0x31
 #define TestSel2Reg 0x32
@@ -130,30 +159,11 @@ void ClearBitMask(unsigned char reg, unsigned char mask);
 #define RFU3E 0x3E
 #define RFU3F 0x3F
 
-typedef struct
-{
-    void (*init)(void);
-
-} RFID_Module;
 /////////////////////////////////////////////////////////////////////
-//?MF522??????????
+//? MF522
 /////////////////////////////////////////////////////////////////////
 #define MI_OK 0
 #define MI_NOTAGERR (-1)
 #define MI_ERR (-2)
 
-void Init_spi_software(void);
 void SPIRC522_Init(void);
-
-#define MF522_SCK_H GPIO_WriteHigh(GPIOC, GPIO_PIN_5)
-#define MF522_SCK_L GPIO_WriteLow(GPIOC, GPIO_PIN_5)
-
-#define MF522_MISO GPIO_ReadInputData(GPIOC)
-
-#define MF522_MOSI_H GPIO_WriteHigh(GPIOC, GPIO_PIN_6)
-#define MF522_MOSI_L GPIO_WriteLow(GPIOC, GPIO_PIN_6)
-
-#define MF522_RST_H GPIO_WriteHigh(GPIOC, GPIO_PIN_3)
-#define MF522_RST_L GPIO_WriteLow(GPIOC, GPIO_PIN_3)
-
-extern const RFID_Module RFID;

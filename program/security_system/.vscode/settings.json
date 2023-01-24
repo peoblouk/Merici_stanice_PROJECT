@@ -7,6 +7,8 @@
     "stm8s.h": "c",
     "stm8s_conf.h": "c",
     "stm8s_flash.h": "c",
-    "stm8s_tim2.h": "c"
+    "stm8s_tim2.h": "c",
+    "rc522.h": "c",
+    "delay.h": "c"
   }
 }

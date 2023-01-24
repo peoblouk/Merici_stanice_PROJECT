@@ -46,3 +46,5 @@
 -x _Serial_read_char
 -x _HSIDivFactor
 -x _UART1_ReceiveData8
+
+-x _PcdReset

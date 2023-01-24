@@ -20,17 +20,17 @@ void delay_reset(void) // helping fuction for reseting timer
 	TIM4_SetCounter(0);
 }
 
-void delay_cycles(uint32_t value) // function for delay created by loop
+void delay_cycles(uint16_t value) // function for delay created by loop
 {
-	uint32_t i;
+	uint16_t i;
 	for (i = 0; i < value; i++)
 		;
 }
 
-void delay_ms(uint32_t time_ms) // function for delay created by timer
+void delay_ms(uint16_t time_ms) // function for delay created by timer
 {
 	delay_reset();
-	for (uint32_t loop_count = 0; loop_count < time_ms; loop_count++)
+	for (uint16_t loop_count = 0; loop_count < time_ms; loop_count++)
 	{
 		while (TIM4_GetFlagStatus(TIM4_FLAG_UPDATE) != SET)
 			; // wait until flag change
@@ -38,10 +38,10 @@ void delay_ms(uint32_t time_ms) // function for delay created by timer
 	}
 }
 
-void delay_us(uint32_t time_us) // function for delay created by timer
+void delay_us(uint16_t time_us) // function for delay created by timer
 {
 	delay_reset();
-	for (uint32_t loop_count = 0; loop_count < (time_us / 1000); loop_count++)
+	for (uint16_t loop_count = 0; loop_count < (time_us / 1000); loop_count++)
 	{
 		while (TIM4_GetFlagStatus(TIM4_FLAG_UPDATE) != SET)
 			;

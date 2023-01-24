@@ -15,16 +15,16 @@
 typedef struct
 {
 	void (*init)(void);
-	void (*cycles)(uint32_t);
-	void (*ms)(uint32_t);
-	void (*us)(uint32_t);
+	void (*cycles)(uint16_t);
+	void (*ms)(uint16_t);
+	void (*us)(uint16_t);
 } Delay_Module;
 
 void delay_init(void);
 void delay_reset(void);
-void delay_cycles(uint32_t value);
-void delay_ms(uint32_t time_ms);
-void delay_us(uint32_t time_us);
+void delay_cycles(uint16_t value);
+void delay_ms(uint16_t time_ms);
+void delay_us(uint16_t time_us);
 extern const Delay_Module delay;
 
 #endif /* DELAY_H */
