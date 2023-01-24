@@ -10,6 +10,8 @@ Security system
 - [Periférie](#Periferie)
 - [Vedoucí práce](#vedoucí-práce)
 - [Materiály](#materiály)
+- [Program](https://github.com/peoblouk/security_system/tree/master/program/security_system)
+- [Schéma](https://github.com/peoblouk/security_system/tree/master/sch%C3%A9mata/security_system)
 
 # Zadání
 
