@@ -2,6 +2,7 @@
 
 <h1 align="center">
 Security system
+
 <img alt="schéma" src="dokumenty/schema.jpg" align = "center">
 </h1>
 
