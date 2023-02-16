@@ -1,0 +1,84 @@
+
+/*        //////////////////////////
+        status = PcdRequest(PICC_REQALL, g_ucTempbuf);
+        ////////////////////////////////////////////////////////////////////////
+        if (status != MI_OK)
+        {
+            GPIO_WriteHigh(LED_PORT, LED_PIN);
+            continue;
+        }
+        else
+        {
+            GPIO_WriteLow(LED_PORT, LED_PIN);
+        }
+        ////////////////////////////////////////////////////////////
+        status = PcdAnticoll(g_ucTempbuf);
+        /////////////////////////////////////////////////////////////
+        if (status != MI_OK)
+        {
+            continue;
+        }
+        //////////////////////////////////////////////////////////////
+        status = PcdSelect(g_ucTempbuf);
+        if (status != MI_OK)
+        {
+            continue;
+        }
+        ////////////////////////////////////////////////////////////////////
+        status = PcdAuthState(PICC_AUTHENT1A, 1, DefaultKey, g_ucTempbuf);
+        if (status != MI_OK)
+        {
+            continue;
+        }
+        // LCD_I2C_SetCursor(0, 0); // LCD set cursor
+        // LCD_I2C_Print("Security system");
+
+        ///////////////////////////////////////////////////////
+        status = PcdRead(1, g_ucTempbuf);
+        if (status != MI_OK)
+        {
+            // continue;
+        }
+        for (int i = 0; i < 3; i++)
+        {
+            Serial.print_str(g_ucTempbuf[i]);
+        }
+        PcdHalt(); */
+
+// Z knihovny RFID
+ * 		MFRC522		STM32F4XX	DESCRIPTION
+ *		CS (SDA)	PG2			Chip select for SPI
+ *		SCK			PB3			Serial Clock for SPI
+ *		MISO		PB4			Master In Slave Out for SPI
+ *		MOSI		PB5			Master Out Slave In for SPI
+ *		GND			GND			Ground
+ *		VCC			3.3V		3.3V power
+ *		RST			3.3V		Reset pin
+ *
+ * You can change your pinout in your defines.h file:
+ *
+ *  //Select SPI, for SPI pins look at TM SPI library
+ *	#define MFRC522_SPI						SPI1
+ *	#define MFRC522_SPI_PINSPACK			TM_SPI_PinsPack_2
+ *
+ *	/Default CS pin for SPI
+ *	#define MFRC522_CS_RCC					RCC_AHB1Periph_GPIOG
+ */
+
+// Vlajky pro serialmonitor
+-x _Serial
+-x _Serial_print_string
+-x _Serial_print_char
+-x _Serial_newline
+-x _Serial_check
+-x _Serial_begin
+-x _Serial_print_int
+-x _Serial_read_char
+-x _HSIDivFactor
+-x _UART1_ReceiveData8
+
+-x _delay
+-x _delay_init
+-x _delay_cycles
+-x _delay_ms
+-x _delay_us

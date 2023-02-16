@@ -1,0 +1,19 @@
+{
+  "files.exclude": {
+    "build": true,
+  },
+  "files.associations": {
+    "*.c": "c",
+    "stm8s_it.h": "c",
+    "stm8s.h": "c",
+    "stm8s_conf.h": "c",
+    "stm8s_flash.h": "c",
+    "stm8s_tim2.h": "c",
+    "serial.h": "c",
+    "stdio.h": "c",
+    "delay.h": "c",
+    "lcd_i2c.h": "c",
+    "*.tcc": "c"
+  },
+  "C_Cpp.errorSquiggles": "disabled"
+}
