@@ -19,21 +19,21 @@ void LCD_I2C_Init(uint8_t address, uint8_t cols, uint8_t rows)
     _lcd_i2c_backlight = LCD_I2C_BACKLIGHT;
     _lcd_i2c_displayfunction = LCD_I2C_4BITMODE | LCD_I2C_2LINE | LCD_I2C_5x8DOTS;
 
-    GPIO_Init(GPIOB, GPIO_PIN_5, GPIO_MODE_OUT_PP_HIGH_FAST); // SDA
-    GPIO_Init(GPIOB, GPIO_PIN_4, GPIO_MODE_OUT_PP_HIGH_FAST); // SCL
+    GPIO_Init(GPIOB, GPIO_PIN_5, GPIO_MODE_OUT_PP_HIGH_FAST);
+    GPIO_Init(GPIOB, GPIO_PIN_4, GPIO_MODE_OUT_PP_HIGH_FAST);
 
     I2C_DeInit();
     I2C_Init(100000, _lcd_i2c_address, I2C_DUTYCYCLE_2, I2C_ACK_CURR, I2C_ADDMODE_7BIT, CLK_GetClockFreq() / 1000000);
     I2C_Cmd(ENABLE);
-    delay_ms_2(50);
-    LCD_I2C_ExpanderWrite(_lcd_i2c_backlight); //
-    delay_ms_2(1000);
+    delay_ms(50);
+    LCD_I2C_ExpanderWrite(_lcd_i2c_backlight);
+    delay_ms(1000);
     LCD_I2C_Write4Bits(0x03 << 4);
-    delay_us_2(4500);
+    delay_us(4500);
     LCD_I2C_Write4Bits(0x03 << 4);
-    delay_us_2(4500);
+    delay_us(4500);
     LCD_I2C_Write4Bits(0x03 << 4);
-    delay_us_2(150);
+    delay_us(150);
     LCD_I2C_Write4Bits(0x02 << 4);
     LCD_I2C_Command(LCD_I2C_FUNCTIONSET | _lcd_i2c_displayfunction);
     _lcd_i2c_displaycontrol = LCD_I2C_DISPLAYON | LCD_I2C_CURSOROFF | LCD_I2C_BLINKOFF;
@@ -49,14 +49,15 @@ void LCD_I2C_Write(uint8_t slave_address, uint8_t data)
     Serial_print("Ted tady se to funguje\n");
     while (I2C_GetFlagStatus(I2C_FLAG_BUSBUSY))
         ;
-    Serial_print("tady už to nefunguje :(\n");
     I2C_GenerateSTART(ENABLE);
     while (!I2C_CheckEvent(I2C_EVENT_MASTER_MODE_SELECT))
         ;
+    Serial_print("tady už to nefunguje :(\n");
+
     I2C_Send7bitAddress(slave_address, I2C_DIRECTION_TX);
+
     while (!I2C_CheckEvent(I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
         ;
-
     I2C_SendData(data);
 
     while (!I2C_CheckEvent(I2C_EVENT_MASTER_BYTE_TRANSMITTED))
@@ -79,10 +80,10 @@ void LCD_I2C_Write4Bits(uint8_t data)
 void LCD_I2C_PulseEnable(uint8_t data)
 {
     LCD_I2C_ExpanderWrite(data | LCD_I2C_En);
-    delay_us_2(1);
+    delay_us(1);
 
     LCD_I2C_ExpanderWrite(data & ~LCD_I2C_En);
-    delay_us_2(50);
+    delay_us(50);
 }
 
 void LCD_I2C_Command(uint8_t data)
@@ -107,13 +108,13 @@ void LCD_I2C_Display()
 void LCD_I2C_Clear()
 {
     LCD_I2C_Command(LCD_I2C_CLEARDISPLAY);
-    delay_us_2(2000);
+    delay_us(2000);
 }
 
 void LCD_I2C_Home()
 {
     LCD_I2C_Command(LCD_I2C_RETURNHOME);
-    delay_us_2(2000);
+    delay_us(2000);
 }
 
 void LCD_I2C_NoBacklight()
