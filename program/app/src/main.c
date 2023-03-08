@@ -15,7 +15,7 @@
 void setup(void)
 {
     CLK_HSIPrescalerConfig(CLK_PRESCALER_HSIDIV1); // taktovani MCU na 16MHz7
-    delay.init();                                  // Inicializace delay
+    delay_init();                                  // Inicializace delay
     Serial_begin(9600);                            // Incializace Serial monitoru
     Serial_print("Serial begin\n");                // Incializační hláška přes UART
     LCD_I2C_Init(0x27, 16, 2);                     // Inicializace LCD
@@ -25,15 +25,15 @@ void setup(void)
 /* ------------------------------------------------------------------------------------------- */
 void loop(void)
 {
+    GPIO_WriteReverse(GPIOE, GPIO_PIN_1);
 }
 /* ------------------------------ Hlavní program --------------------------------------------- */
 int main(void)
 {
     setup(); // Inicializace periferíí a úvodní text na LCD obrazovku
-    /*     while (1)
-        {
-            loop();
-        }
-     */
+    while (1)
+    {
+        loop();
+    }
 }
 /* ------------------------------------------------------------------------------------------- */

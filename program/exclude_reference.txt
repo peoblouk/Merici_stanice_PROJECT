@@ -1,4 +1,3 @@
--x _init_milis
 -x _LCD_I2C_Home
 -x _LCD_I2C_PulseEnable
 -x _HSIDivFactor
@@ -34,10 +33,7 @@
 -x _TIM3_UPD_OVF_BRK_IRQHandler
 -x _UART2_RX_IRQHandler
 -x _UART2_TX_IRQHandler
--x _delay
 -x _TIM3_CAP_COM_IRQHandler
 -x _delay_init
 -x _delay_cycles
 -x _TIM4_DeInit
--x _delay_ms
--x _delay_us
