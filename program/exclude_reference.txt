@@ -22,5 +22,7 @@
 -x _HSIDivFactor
 -x _CLK_HSIPrescalerConfig
 -x _LCD_I2C_Home
+
 -x _TM_MFRC522_Init
 -x _TM_MFRC522_AntennaOn
+-x _delay_reset

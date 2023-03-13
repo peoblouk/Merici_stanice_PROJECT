@@ -12,12 +12,13 @@ void delay_reset(void) // helping fuction for reseting timer
 	TIM4_SetCounter(0);
 }
 
+/*
 void delay_cycles(uint32_t value) // function for delay created by loop
 {
 	uint32_t i;
 	for (i = 0; i < value; i++)
 		;
-}
+} */
 
 void delay_ms(uint32_t time_ms) // function for delay created by timer
 {
@@ -41,7 +42,7 @@ void delay_us(uint32_t time_us) // function for delay created by timer
 	}
 }
 
-void delay_ms_2(uint32_t time_ms_2)
+/* void delay_ms_2(uint32_t time_ms_2)
 {
 	uint32_t clock_freq = CLK_GetClockFreq();
 
@@ -50,6 +51,7 @@ void delay_ms_2(uint32_t time_ms_2)
 		nop();
 	}
 }
+ */
 
 // Strukty zabírají mnohem moc místa :/
 /*const Delay_Module delay = {

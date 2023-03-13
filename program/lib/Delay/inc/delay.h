@@ -10,8 +10,16 @@
 #define DELAY_H
 
 #include "stm8s.h"
-#include <stdio.h>
+// #include <stdio.h> //! SOUVISÍ S DELAY_MS_2 a může dlělat problém s UART
 
+void delay_init(void);
+void delay_reset(void);
+void delay_ms(uint32_t time_ms);
+void delay_us(uint32_t time_us);
+
+// void delay_ms_2(uint32_t time_ms_2);
+// void delay_cycles(uint32_t value);
+// extern const Delay_Module delay;
 /* typedef struct
 {
 	void (*init)(void);
@@ -20,13 +28,5 @@
 	void (*us)(uint32_t);
 } Delay_Module;
  */
-
-void delay_init(void);
-void delay_reset(void);
-void delay_cycles(uint32_t value);
-void delay_ms(uint32_t time_ms);
-void delay_us(uint32_t time_us);
-void delay_ms_2(uint32_t time_ms_2);
-// extern const Delay_Module delay;
 
 #endif /* DELAY_H */
