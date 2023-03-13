@@ -11,7 +11,8 @@ void Serial_Begin(uint32_t BaudRate)
     CLK_PeripheralClockConfig(CLK_PERIPHERAL_UART1, ENABLE);
     UART1_Init(BaudRate, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_TXRX_ENABLE);
     UART1_Cmd(ENABLE);
-    delay_ms(50); //! TADY MŮŽE NASTAT PROBBLÉM
+    delay_ms_2(50); //! TADY MŮŽE NASTAT PROBBLÉM podle logické analýzátoru je delay(50) = 63,17 ms
+    // TODO TADY JE TŘEBA VYŘEŠIT tento delay
 }
 
 /**

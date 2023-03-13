@@ -42,7 +42,7 @@ void delay_us(uint32_t time_us) // function for delay created by timer
 	}
 }
 
-/* void delay_ms_2(uint32_t time_ms_2)
+void delay_ms_2(uint32_t time_ms_2)
 {
 	uint32_t clock_freq = CLK_GetClockFreq();
 
@@ -51,7 +51,6 @@ void delay_us(uint32_t time_us) // function for delay created by timer
 		nop();
 	}
 }
- */
 
 // Strukty zabírají mnohem moc místa :/
 /*const Delay_Module delay = {

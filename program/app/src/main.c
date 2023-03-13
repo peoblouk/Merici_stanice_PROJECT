@@ -18,34 +18,37 @@ uint8_t CardID[5];   // Proměnná pro uložení přečteného UID z karty
 void setup(void)
 {
     CLK_HSIPrescalerConfig(CLK_PRESCALER_HSIDIV1);
+    Serial_Begin(9600); // Inicializace Serial monitoru
+    Serial_Print_String("test");
     delay_init();                     // Incializace časovače TIM4
-    Serial_Begin(9600);               // Inicializace Serial monitoru
     LCD_I2C_Init(0x27, 16, 2);        // Inicializace LCD
     LCD_I2C_SetCursor(0, 0);          // Nastavení kurzoru
     LCD_I2C_Print("Security system"); // Úvodní obrazovka na displej
     TM_MFRC522_Init();                // Incializace RFID readeru
+    GPIO_Init(GPIOD, GPIO_PIN_4, GPIO_MODE_OUT_PP_HIGH_SLOW);
     // enableInterrupts(); // Povolení přeruření globálně
 }
 
 int main(void)
 {
     setup();
-    delay_ms(1500);
+
     while (1)
     {
+        GPIO_WriteReverse(GPIOD, GPIO_PIN_4);
         if (TM_MFRC522_Check(CardID) == MI_OK)
         {
-            Serial_Print_String("Čtení proběhlo správně\n");
+            // Serial_Print_String("Čtení proběhlo správně\n");
             Status = TRUE;
-            LCD_I2C_SetCursor(1, 0);
+            LCD_I2C_SetCursor(0, 1);
             // sprintf("")
             LCD_I2C_Print(CardID); // Print ID karty na displej
         }
         if (TM_MFRC522_Check(CardID) == MI_ERR)
         {
-            Serial_Print_String("Žádná karta nebyla naleza\n");
+            // Serial_Print_String("Žádná karta nebyla naleza\n");
             Status = FALSE;
-            LCD_I2C_SetCursor(1, 0);
+            LCD_I2C_SetCursor(0, 1);
             LCD_I2C_Print("nic");
         }
     }
