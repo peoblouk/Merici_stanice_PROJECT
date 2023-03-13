@@ -12,13 +12,6 @@
 #include "stm8s.h"
 #include <stdio.h>
 
-void delay_init(void);
-void delay_reset(void);
-void delay_cycles(uint32_t value);
-void delay_ms(uint32_t time_ms);
-void delay_us(uint32_t time_us);
-void delay_ms_2(uint32_t ms); // This function is used for Serial monitor
-
 /* typedef struct
 {
 	void (*init)(void);
@@ -27,7 +20,13 @@ void delay_ms_2(uint32_t ms); // This function is used for Serial monitor
 	void (*us)(uint32_t);
 } Delay_Module;
  */
-// void delay_us_2(uint32_t us);
+
+void delay_init(void);
+void delay_reset(void);
+void delay_cycles(uint32_t value);
+void delay_ms(uint32_t time_ms);
+void delay_us(uint32_t time_us);
+void delay_ms_2(uint32_t time_ms_2);
 // extern const Delay_Module delay;
 
 #endif /* DELAY_H */

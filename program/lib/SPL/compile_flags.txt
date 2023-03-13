@@ -1,9 +1,7 @@
--DF_CPU=16000000
--DSTM8S105
 -xc
 -std=c99
 -Wall
-#-pedantic
+-pedantic
 -I.
 -I./inc/
 -I./src
@@ -17,4 +15,6 @@
 -D__SDCC__
 -DSDCC_VERSION=40000
 -D__CLANG
+-DSTM8S208 
+-DF_CPU=16000000
 -Wno-gnu-binary-literal

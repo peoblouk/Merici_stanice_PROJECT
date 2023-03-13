@@ -7,11 +7,11 @@
  * @param  BaudRate : Speed of serial monitor.
  * @retval None
  */
-void Serial_begin(uint32_t BaudRate)
+void Serial_Begin(uint32_t BaudRate)
 {
-    CLK_PeripheralClockConfig(CLK_PERIPHERAL_UART2, ENABLE);
-    UART2_Init(BaudRate, UART2_WORDLENGTH_8D, UART2_STOPBITS_1, UART2_PARITY_NO, UART2_SYNCMODE_CLOCK_DISABLE, UART2_MODE_TXRX_ENABLE);
-    UART2_Cmd(ENABLE);
+    CLK_PeripheralClockConfig(CLK_PERIPHERAL_UART1, ENABLE);
+    UART1_Init(BaudRate, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_TXRX_ENABLE);
+    UART1_Cmd(ENABLE);
     delay_ms_2(50);
 }
 
@@ -20,16 +20,65 @@ void Serial_begin(uint32_t BaudRate)
  * @param  message : message to write.
  * @retval None
  */
-void Serial_print(char message[])
+void Serial_Print_String(char message[])
 {
     char i = 0;
 
     while (message[i] != 0x00)
     {
-        UART2_SendData8(message[i]);
+        UART1_SendData8(message[i]);
 
-        while (UART2_GetFlagStatus(UART2_FLAG_TXE) == RESET)
+        while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
             ;
         i++;
     }
+}
+
+void Serial_Print_Char(char value)
+{
+    UART1_SendData8(value);
+    while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
+        ;
+}
+
+void Serial_Print_Int(int number)
+{
+    char count = 0;
+    char digit[5] = "";
+    while (number != 0)
+    {
+        digit[count] = number % 10;
+        count++;
+        number = number / 10;
+    }
+    {
+        UART1_SendData8(digit[count - 1] + 0x30);
+        while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
+            ;
+        count--;
+    }
+}
+
+void Serial_Newline()
+{
+    UART1_SendData8(0x0a);
+    while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
+        ;
+}
+
+bool Serial_Available()
+{
+    if (UART1_GetFlagStatus(UART1_FLAG_RXNE) == TRUE)
+        return TRUE;
+    else
+        return FALSE;
+}
+
+char Serial_Read_Char()
+{
+    while (UART1_GetFlagStatus(UART1_FLAG_RXNE) == RESET)
+        ;
+    UART1_ClearFlag(UART1_FLAG_RXNE);
+
+    return UART1_ReceiveData8();
 }

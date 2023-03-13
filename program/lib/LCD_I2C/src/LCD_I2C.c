@@ -1,7 +1,7 @@
 #include "stm8s.h"
 #include "delay.h"
 #include "LCD_I2C.h"
-#include "Serial.h"
+// #include "Serial.h"
 
 uint8_t _lcd_i2c_address;
 uint8_t _lcd_i2c_cols;
@@ -11,13 +11,6 @@ uint8_t _lcd_i2c_displayfunction;
 uint8_t _lcd_i2c_displaycontrol;
 uint8_t _lcd_i2c_displaymode;
 
-/**
- * @brief  Init LCD via I2C.
- * @param  address : Address of slave.
- * @param  cols: Number of columns.
- * @param rows: Number of rows.
- * @retval None
- */
 void LCD_I2C_Init(uint8_t address, uint8_t cols, uint8_t rows)
 {
     _lcd_i2c_address = address << 1;
@@ -53,13 +46,11 @@ void LCD_I2C_Init(uint8_t address, uint8_t cols, uint8_t rows)
 
 void LCD_I2C_Write(uint8_t slave_address, uint8_t data)
 {
-    Serial_print("Ted tady se to funguje\n");
     while (I2C_GetFlagStatus(I2C_FLAG_BUSBUSY))
         ;
     I2C_GenerateSTART(ENABLE);
     while (!I2C_CheckEvent(I2C_EVENT_MASTER_MODE_SELECT))
         ;
-    Serial_print("tady už to nefunguje :(\n");
 
     I2C_Send7bitAddress(slave_address, I2C_DIRECTION_TX);
 
@@ -112,11 +103,6 @@ void LCD_I2C_Display()
     LCD_I2C_Command(LCD_I2C_DISPLAYCONTROL | _lcd_i2c_displaycontrol);
 }
 
-/**
- * @brief  Clear display.
- * @param  None
- * @retval None
- */
 void LCD_I2C_Clear()
 {
     LCD_I2C_Command(LCD_I2C_CLEARDISPLAY);
@@ -151,12 +137,6 @@ void LCD_I2C_CreateChar(uint8_t location, uint8_t charmap[])
     }
 }
 
-/**
- * @brief  Set curosr on display.
- * @param  col : X on display.
- * @param  row : Y on display.
- * @retval None
- */
 void LCD_I2C_SetCursor(uint8_t col, uint8_t row)
 {
     int row_offsets[] = {0x00, 0x40, 0x14, 0x54};
@@ -169,11 +149,6 @@ void LCD_I2C_SetCursor(uint8_t col, uint8_t row)
     LCD_I2C_Command(LCD_I2C_SETDDRAMADDR | (col + row_offsets[row]));
 }
 
-/**
- * @brief  Print on display.
- * @param  string : Message in string.
- * @retval None
- */
 void LCD_I2C_Print(uint8_t *string)
 {
     while (*string)
@@ -183,11 +158,6 @@ void LCD_I2C_Print(uint8_t *string)
     }
 }
 
-/**
- * @brief  Print char on display.
- * @param  character : Only char.
- * @retval None
- */
 void LCD_I2C_PrintChar(uint8_t character)
 {
     LCD_I2C_Send(character, LCD_I2C_Rs);

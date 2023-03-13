@@ -1,11 +1,3 @@
-/**
- * @author [Petr Oblouk]
- * @github [https://github.com/peoblouk]
- * @create date 31-05-2022 - 17:05:15
- * @modify date 31-05-2022 - 17:05:15
- * @desc [Delay Library]
- */
-
 #include "delay.h"
 
 void delay_init(void) // inicialization of counter
@@ -49,30 +41,20 @@ void delay_us(uint32_t time_us) // function for delay created by timer
 	}
 }
 
-void delay_ms_2(uint32_t ms)
+void delay_ms_2(uint32_t time_ms_2)
 {
 	uint32_t clock_freq = CLK_GetClockFreq();
 
-	for (uint32_t i = 0; i < ((clock_freq / 18 / 1000UL) * ms); i++)
+	for (uint32_t i = 0; i < ((clock_freq / 18 / 1000UL) * time_ms_2); i++)
 	{
 		nop();
 	}
 }
 
-/* const Delay_Module delay = {
+// Strukty zabírají mnohem moc místa :/
+/*const Delay_Module delay = {
 	.init = delay_init,
 	.cycles = delay_cycles,
 	.ms = delay_ms,
 	.us = delay_us,
-};
- */
-
-/* void delay_us_2(uint32_t us)
-{
-	uint32_t clock_freq = CLK_GetClockFreq();
-
-	for (uint32_t i = 0; i < ((clock_freq / 18 / 1000UL) * (us / 1000)); i++)
-	{
-		nop();
-	}
-} */
+};*/

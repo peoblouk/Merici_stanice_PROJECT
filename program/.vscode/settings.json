@@ -1,9 +1,8 @@
 {
   "files.exclude": {
-    "build": true,
+    "build": false,
   },
   "files.associations": {
-    "*.c": "c",
     "stm8s_it.h": "c",
     "stm8s.h": "c",
     "stm8s_conf.h": "c",
@@ -13,7 +12,11 @@
     "stdio.h": "c",
     "delay.h": "c",
     "lcd_i2c.h": "c",
-    "*.tcc": "c"
+    "at24c.h": "c",
+    "dht11.h": "c",
+    "encoder.h": "c",
+    "milis.h": "c",
+    "lcd_i2c_ui.h": "c"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }

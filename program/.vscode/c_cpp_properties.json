@@ -6,11 +6,11 @@
                 "${workspaceFolder}/**",
                 "C:/Program Files/SDCC/include/**",
                 "app/inc/**",
-                "lib/SPL/inc/**",
-                "lib/**"
+                "lib/**",
+                "lib/encoder/inc/**",
             ],
             "defines": [
-                "STM8S105",
+                "STM8S103",
                 "USE_STDPERIPH_DRIVER",
                 "_SDCC_"
             ],
