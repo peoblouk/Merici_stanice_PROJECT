@@ -2,9 +2,11 @@
 
 <h1 align="center">
 Security system
+<img alt="první pohled" src="foto/first_look.jpeg" align = "left">
+<img alt="druhý pohled" src="foto/second_look.jpeg" align = "right">
 
-<img alt="schéma" src="dokumenty/schema.jpg" align = "center">
 </h1>
+<img alt="schéma" src="dokumenty/schema.jpg" align = "center">
 
 - [Zadání projektu](#Zadani)
 - [Periférie](#Periferie)
