@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "*.c": "c",
-        "stm8s.h": "c"
+        "stm8s.h": "c",
+        "encoder.h": "c"
     }
 }

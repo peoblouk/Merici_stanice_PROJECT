@@ -26,3 +26,5 @@
 -x _TM_MFRC522_Init
 -x _TM_MFRC522_AntennaOn
 -x _delay_reset
+-x _handleRight
+-x _handleLeft
