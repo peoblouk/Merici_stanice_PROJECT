@@ -143,9 +143,9 @@ INTERRUPT_HANDLER(EXTI_PORTC_IRQHandler, 5)
  */
 // INTERRUPT_HANDLER(EXTI_PORTD_IRQHandler, 6)
 // {
-  /* In order to detect unexpected events during development,
-   * it is recommended to set a breakpoint on the following instruction.
-   */
+/* In order to detect unexpected events during development,
+ * it is recommended to set a breakpoint on the following instruction.
+ */
 // }
 
 /**
@@ -270,12 +270,13 @@ INTERRUPT_HANDLER(TIM5_CAP_COM_IRQHandler, 14)
  * @param  None
  * @retval None
  */
-INTERRUPT_HANDLER(TIM2_UPD_OVF_BRK_IRQHandler, 13)
-{
-  /* In order to detect unexpected events during development,
-   * it is recommended to set a breakpoint on the following instruction.
-   */
-}
+
+// INTERRUPT_HANDLER(TIM2_UPD_OVF_BRK_IRQHandler, 13)
+// {
+//   /* In order to detect unexpected events during development,
+//    * it is recommended to set a breakpoint on the following instruction.
+//    */
+// }
 
 /**
  * @brief  Timer2 Capture/Compare Interrupt routine

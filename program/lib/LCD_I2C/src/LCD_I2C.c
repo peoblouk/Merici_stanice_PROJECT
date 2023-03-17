@@ -1,7 +1,6 @@
 #include "stm8s.h"
 #include "delay.h"
 #include "LCD_I2C.h"
-// #include "Serial.h"
 
 uint8_t _lcd_i2c_address;
 uint8_t _lcd_i2c_cols;
@@ -51,12 +50,10 @@ void LCD_I2C_Write(uint8_t slave_address, uint8_t data)
     I2C_GenerateSTART(ENABLE);
     while (!I2C_CheckEvent(I2C_EVENT_MASTER_MODE_SELECT))
         ;
-    // Serial_Print_String("test_2");
     I2C_Send7bitAddress(slave_address, I2C_DIRECTION_TX);
 
     while (!I2C_CheckEvent(I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
         ;
-    // Serial_Print_String("test_3");
     I2C_SendData(data);
 
     while (!I2C_CheckEvent(I2C_EVENT_MASTER_BYTE_TRANSMITTED))
