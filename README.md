@@ -14,6 +14,7 @@ Security system
 - [Materiály](#materiály)
 - [Program](https://github.com/peoblouk/security_system/tree/master/program/security_system)
 - [Schéma](https://github.com/peoblouk/security_system/tree/master/sch%C3%A9mata/security_system)
+- [Obrázky](#obrázky)
 
 # Zadání
 
@@ -27,6 +28,15 @@ Security system
 - 1x LCD1602 – zobrazovací periferie (sběrnice I2C)
 - 1x PCF8574 – převodník na I2C pro zobrazovací periferii
 - 1x RFID-R522 – čtečka přístupových karet (sběrnice SPI)
+  <img alt="periferie" src="foto/periferie.jpeg" align = "right">
+
+# Obrázky
+
+<div align= "center">
+  <img alt="periferie" src="foto/assembling.jpeg" align = "left">
+  <img alt="periferie" src="foto/assembling_2.jpeg" align = "right">
+  <img alt="periferie" src="foto/3d_knob.png" align = "center">
+</div>
 
 # Vedoucí práce
 
