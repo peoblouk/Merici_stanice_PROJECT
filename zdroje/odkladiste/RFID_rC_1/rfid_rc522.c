@@ -7,15 +7,12 @@
  */
 
 #include "rfid_rc522.h"
-#include "Serial.h"
 
 uint8_t RC522_SPI_Transfer(uint8_t data)
 {
 	SPI_SendData(data);
-	Serial_Print_String("čtení");
 	uint8_t rx_data;
 	rx_data = SPI_ReceiveData();
-	Serial_Print_Int(rx_data);
 	return rx_data;
 }
 
@@ -24,6 +21,7 @@ void TM_MFRC522_Init(void)
 {
 	// Clock konfigurace
 	CLK_PeripheralClockConfig(CLK_PERIPHERAL_SPI, ENABLE); // Nahrada za MFRC522_CS_RCC
+
 	TM_MFRC522_InitPins();
 	// SPI konfigurace
 	SPI_DeInit();

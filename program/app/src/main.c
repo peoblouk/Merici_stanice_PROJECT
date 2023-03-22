@@ -97,7 +97,8 @@ int main(void)
             {
                 Status = FALSE;
                 LCD_I2C_SetCursor(0, 1);
-                LCD_I2C_Print("UID: xxxx");
+                sprintf(buffer, "UID: %x", CardID);
+                LCD_I2C_Print(buffer));
             }
 
             // Kontrola encoderu

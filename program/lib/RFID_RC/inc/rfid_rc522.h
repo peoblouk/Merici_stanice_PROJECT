@@ -42,6 +42,7 @@ typedef enum
 	MI_ERR
 } TM_MFRC522_Status_t;
 
+/////////////////////////////////////////////////////////////////////
 /* MFRC522 Commands */
 #define PCD_IDLE 0x00		// NO action; Cancel the current command
 #define PCD_AUTHENT 0x0E	// Authentication Key
@@ -50,7 +51,7 @@ typedef enum
 #define PCD_TRANSCEIVE 0x0C // Transmit and receive data,
 #define PCD_RESETPHASE 0x0F // Reset
 #define PCD_CALCCRC 0x03	// CRC Calculate
-
+/////////////////////////////////////////////////////////////////////
 /* Mifare_One card command word */
 #define PICC_REQIDL 0x26	// find the antenna area does not enter hibernation
 #define PICC_REQALL 0x52	// find all the cards antenna area
@@ -65,7 +66,7 @@ typedef enum
 #define PICC_RESTORE 0xC2	// transfer block data to the buffer
 #define PICC_TRANSFER 0xB0	// save the data in the buffer
 #define PICC_HALT 0x50		// Sleep
-
+/////////////////////////////////////////////////////////////////////
 /* MFRC522 Registers */
 // Page 0: Command and Status
 #define MFRC522_REG_RESERVED00 0x00
@@ -139,11 +140,11 @@ typedef enum
 #define MFRC522_DUMMY 0x00
 
 #define MFRC522_MAX_LEN 16
-
+/////////////////////////////////////////////////////////////////////
 //! Funkce na inicializaci RFID čtečky
 extern void TM_MFRC522_Init(void);
 /**[-]**/
-
+/////////////////////////////////////////////////////////////////////
 //! Funkce pro kontrolu ID karty
 extern TM_MFRC522_Status_t TM_MFRC522_Check(uint8_t *id);
 /**
@@ -154,7 +155,7 @@ extern TM_MFRC522_Status_t TM_MFRC522_Check(uint8_t *id);
 		MI_OK: znamená, že přečtená karta je přečtena dobře
 		MI_ERR: znamená, že přečtená karta ne podařila přečíst
 	**/
-
+/////////////////////////////////////////////////////////////////////
 //! Funkce pro porovnání dvou ID karet
 extern TM_MFRC522_Status_t TM_MFRC522_Compare(uint8_t *CardID, uint8_t *CompareID);
 /**	Použitelné pokud známe dvě ID karet třeba z databáze a chce je porovnat s přečtenou kartou
@@ -165,7 +166,7 @@ extern TM_MFRC522_Status_t TM_MFRC522_Compare(uint8_t *CardID, uint8_t *CompareI
 		MI_OK: znamená, že porovnávané karty jsou shodné
 		MI_ERR: znamená, že karty jsou odlišné
 	**/
-
+/////////////////////////////////////////////////////////////////////
 //! Funkce, které používají pro funkci čtečky a jsou private
 extern void TM_MFRC522_InitPins(void);
 extern void TM_MFRC522_WriteRegister(uint8_t addr, uint8_t val);

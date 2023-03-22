@@ -2,12 +2,12 @@
  * @author [Petr Oblouk]
  * @github [https://github.com/peoblouk]
  * @create date 01-02-2023 - 19:48:00
- * @modify date 01-02-2023 - 19:48:00
+ * @modify date 22-03-2023 - 15:46:16
  * @desc [Mifare MFRC522 RFID Card reader library]
  */
 
 #include "rfid_rc522.h"
-
+/////////////////////////////////////////////////////////////////////
 //! Funkce na inicializaci RFID čtečky
 void TM_MFRC522_Init(void)
 {
@@ -16,24 +16,26 @@ void TM_MFRC522_Init(void)
 	TM_MFRC522_InitPins();
 	// SPI konfigurace
 	SPI_DeInit();
+	CS_L;
 	SPI_Init(SPI_FIRSTBIT_MSB, SPI_BAUDRATEPRESCALER_4, SPI_MODE_MASTER,
 			 SPI_CLOCKPOLARITY_HIGH, SPI_CLOCKPHASE_2EDGE, SPI_DATADIRECTION_2LINES_FULLDUPLEX,
 			 SPI_NSS_SOFT, 0x07);
 	SPI_Cmd(ENABLE);
 
 	TM_MFRC522_Reset();
-	TM_MFRC522_WriteRegister(MFRC522_REG_T_MODE, 0x8D);
+
+	TM_MFRC522_WriteRegister(MFRC522_REG_T_MODE, 0x8D); // TAuto=1; timer starts automatically at the end of the transmission in all communication modes at all speeds
 	TM_MFRC522_WriteRegister(MFRC522_REG_T_PRESCALER, 0x3E);
 	TM_MFRC522_WriteRegister(MFRC522_REG_T_RELOAD_L, 30);
 	TM_MFRC522_WriteRegister(MFRC522_REG_T_RELOAD_H, 0);
 
 	/* 48dB gain */
 	TM_MFRC522_WriteRegister(MFRC522_REG_RF_CFG, 0x70);
-	TM_MFRC522_WriteRegister(MFRC522_REG_TX_AUTO, 0x40);
+	TM_MFRC522_WriteRegister(MFRC522_REG_TX_AUTO, 0x40); // Defaultně 100% modulace - oddělený register ModGsPReg
 	TM_MFRC522_WriteRegister(MFRC522_REG_MODE, 0x3D);
 	TM_MFRC522_AntennaOn(); // Open the antenna
 }
-
+/////////////////////////////////////////////////////////////////////
 //! Funkce pro kontrolu ID karty
 TM_MFRC522_Status_t TM_MFRC522_Check(uint8_t *id)
 {
@@ -50,7 +52,7 @@ TM_MFRC522_Status_t TM_MFRC522_Check(uint8_t *id)
 
 	return status;
 }
-
+/////////////////////////////////////////////////////////////////////
 //! Funkce pro porovnání dvou ID karet
 TM_MFRC522_Status_t TM_MFRC522_Compare(uint8_t *CardID, uint8_t *CompareID)
 {
@@ -64,7 +66,7 @@ TM_MFRC522_Status_t TM_MFRC522_Compare(uint8_t *CardID, uint8_t *CompareID)
 	}
 	return MI_OK;
 }
-
+/////////////////////////////////////////////////////////////////////
 //! Funkce na inicializaaci pinů pro práci s SPI
 void TM_MFRC522_InitPins(void)
 {
@@ -80,40 +82,61 @@ void TM_MFRC522_InitPins(void)
 	GPIO_Init(SPI_PORT, SPI_RST, GPIO_MODE_OUT_PP_HIGH_SLOW);				  // Inicializace RST
 	GPIO_WriteHigh(SPI_PORT, SPI_RST);										  // Reset RFID čtečky
 	CS_H;																	  // Konec komunikace
+	GPIO_WriteLow(SPIO_PORT, SPI_RST);
 }
-
+/////////////////////////////////////////////////////////////////////
 //! Funkce na zápis do registru MFRC522
 void TM_MFRC522_WriteRegister(uint8_t addr, uint8_t val)
 {
 	CS_L;							  // Začátek komunikace
 	SPI_SendData((addr << 1) & 0x7E); // Posílání dat
 	SPI_SendData(val);				  // Posílání dat
-	CS_H;							  // Konec komunikace
-}
 
+	while ((SPI_GetFlagStatus(SPI_SR_TXE)) == RESET)
+		; // Čekám, než obdržím něco do bufferu
+
+	while (SPI_GetFlagStatus(SPI_FLAG_RXNE) == RESET)
+		;
+
+	CS_H; // Konec komunikace
+}
+/////////////////////////////////////////////////////////////////////
 //! Funkce na čtení z registru MFRC522
+char temp = 0;
 uint8_t TM_MFRC522_ReadRegister(uint8_t addr)
 {
 	uint8_t val;							   // Lokální proměnná pro uložení
 	CS_L;									   // Začátek komunikace
 	SPI_SendData(((addr << 1) & 0x7E) | 0x80); // Pošli data
-	SPI_SendData(MFRC522_DUMMY);			   // Pošli data
-	val = MFRC522_DUMMY;					   // Ulož data //TODO musí se dořešit
-	CS_H;									   // Ukončení komunikace
+											   // SPI_SendData(MFRC522_DUMMY);			   // Pošli data
+	while ((SPI_GetFlagStatus(SPI_SR_TXE)) == 0)
+		; // Čekám, než obdržím něco do bufferu
+
+	while (SPI_GetFlagStatus(SPI_FLAG_RXNE) == RESET)
+		;
+	temp = SPI_ReceiveData(); // Ulož data do proměnné //TODO musí se dořešit
+	SPI_SendData(MFRC522_DUMMY);
+	//? Opakuji
+	while ((SPI_GetFlagStatus(SPI_SR_TXE)) == 0)
+		; // Čekám, než obdržím něco do bufferu
+	while (SPI_GetFlagStatus(SPI_FLAG_RXNE) == RESET)
+		;
+	val = SPI_ReceiveData(); // Ulož data do proměnné //TODO musí se dořešit
+	CS_H;					 // Ukončení komunikace
 	return val;
 }
-
+/////////////////////////////////////////////////////////////////////
 //! Funkce na nastavení masky
 void TM_MFRC522_SetBitMask(uint8_t reg, uint8_t mask)
 {
 	TM_MFRC522_WriteRegister(reg, TM_MFRC522_ReadRegister(reg) | mask); // Zapiš do registru
 }
-
+/////////////////////////////////////////////////////////////////////
 void TM_MFRC522_ClearBitMask(uint8_t reg, uint8_t mask)
 {
 	TM_MFRC522_WriteRegister(reg, TM_MFRC522_ReadRegister(reg) & (~mask));
 }
-
+/////////////////////////////////////////////////////////////////////
 //! Funkce na zapnutí antény MFRC522
 void TM_MFRC522_AntennaOn(void)
 {
@@ -125,19 +148,19 @@ void TM_MFRC522_AntennaOn(void)
 		TM_MFRC522_SetBitMask(MFRC522_REG_TX_CONTROL, 0x03);
 	}
 }
-
+/////////////////////////////////////////////////////////////////////
 //! Funkce na vypnutí antény MFRC522
 void TM_MFRC522_AntennaOff(void)
 {
 	TM_MFRC522_ClearBitMask(MFRC522_REG_TX_CONTROL, 0x03);
 }
-
+/////////////////////////////////////////////////////////////////////
 //! Funkce na reset registru
 void TM_MFRC522_Reset(void)
 {
 	TM_MFRC522_WriteRegister(MFRC522_REG_COMMAND, PCD_RESETPHASE);
 }
-
+/////////////////////////////////////////////////////////////////////
 // TODO zjistit k čemu tato funkce je
 TM_MFRC522_Status_t TM_MFRC522_Request(uint8_t reqMode, uint8_t *TagType)
 {
@@ -156,7 +179,7 @@ TM_MFRC522_Status_t TM_MFRC522_Request(uint8_t reqMode, uint8_t *TagType)
 
 	return status;
 }
-
+/////////////////////////////////////////////////////////////////////
 //! Funkce na zápis na kartu
 TM_MFRC522_Status_t TM_MFRC522_ToCard(uint8_t command, uint8_t *sendData, uint8_t sendLen, uint8_t *backData, uint16_t *backLen)
 {
@@ -262,7 +285,7 @@ TM_MFRC522_Status_t TM_MFRC522_ToCard(uint8_t command, uint8_t *sendData, uint8_
 
 	return status;
 }
-
+/////////////////////////////////////////////////////////////////////
 TM_MFRC522_Status_t TM_MFRC522_Anticoll(uint8_t *serNum)
 {
 	TM_MFRC522_Status_t status;
@@ -290,7 +313,7 @@ TM_MFRC522_Status_t TM_MFRC522_Anticoll(uint8_t *serNum)
 	}
 	return status;
 }
-
+/////////////////////////////////////////////////////////////////////
 //! Funkce na detekci CRC kodu
 void TM_MFRC522_CalculateCRC(uint8_t *pIndata, uint8_t len, uint8_t *pOutData)
 {
@@ -319,7 +342,7 @@ void TM_MFRC522_CalculateCRC(uint8_t *pIndata, uint8_t len, uint8_t *pOutData)
 	pOutData[0] = TM_MFRC522_ReadRegister(MFRC522_REG_CRC_RESULT_L);
 	pOutData[1] = TM_MFRC522_ReadRegister(MFRC522_REG_CRC_RESULT_M);
 }
-
+/////////////////////////////////////////////////////////////////////
 //! Funkce pro výběr tagu
 uint8_t TM_MFRC522_SelectTag(uint8_t *serNum)
 {
@@ -349,7 +372,7 @@ uint8_t TM_MFRC522_SelectTag(uint8_t *serNum)
 
 	return size;
 }
-
+/////////////////////////////////////////////////////////////////////
 //! Funkce zkoušku hesla
 TM_MFRC522_Status_t TM_MFRC522_Auth(uint8_t authMode, uint8_t BlockAddr, uint8_t *Sectorkey, uint8_t *serNum)
 {
@@ -378,7 +401,7 @@ TM_MFRC522_Status_t TM_MFRC522_Auth(uint8_t authMode, uint8_t BlockAddr, uint8_t
 
 	return status;
 }
-
+/////////////////////////////////////////////////////////////////////
 //! Funkce na čtení po zadání úspěšně hesla
 TM_MFRC522_Status_t TM_MFRC522_Read(uint8_t blockAddr, uint8_t *recvData)
 {
@@ -434,7 +457,7 @@ TM_MFRC522_Status_t TM_MFRC522_Write(uint8_t blockAddr, uint8_t *writeData)
 
 	return status;
 }
-
+/////////////////////////////////////////////////////////////////////
 //! Funkce na přerušení RFID čtečky
 void TM_MFRC522_Halt(void)
 {
