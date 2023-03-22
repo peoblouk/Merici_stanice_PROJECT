@@ -2,7 +2,6 @@
 #include "delay.h"
 #include "LCD_I2C.h"
 #include "milis.h"
-#include "LCD_I2C_UI.h"
 #include "rfid_rc522.h"
 
 //! Makra
@@ -84,10 +83,10 @@ int main(void)
     {
         if ((get_milis() - mtime_key) > 500) // každých 500 ms
         {
-            mtime_key = get_milis();               // milis now
-            LCD_I2C_SetCursor(0, 0);               // Nastavení kurzoru
-            LCD_I2C_Print("Priloz kartu");         // Úvodní obrazovka na displej
-            if (TM_MFRC522_Check(CardID) == MI_OK) // Karta nalezena
+            mtime_key = get_milis();       // milis now
+            LCD_I2C_SetCursor(0, 0);       // Nastavení kurzoru
+            LCD_I2C_Print("Priloz kartu"); // Úvodní obrazovka na displej
+            /* if (TM_MFRC522_Check(CardID) == MI_OK) // Karta nalezena
             {
                 Status = TRUE;
                 sprintf(buffer, "%x", CardID);
@@ -98,8 +97,8 @@ int main(void)
                 Status = FALSE;
                 LCD_I2C_SetCursor(0, 1);
                 sprintf(buffer, "UID: %x", CardID);
-                LCD_I2C_Print(buffer));
-            }
+                LCD_I2C_Print(buffer);
+            } */
 
             // Kontrola encoderu
             LCD_I2C_SetCursor(14, 1);
@@ -107,6 +106,7 @@ int main(void)
             LCD_I2C_Print(buffer); // TODO zjistit, zda se nebude být s ostatními sprintf
         }
     }
+    return 0;
 }
 
 //! Obsluha přerušení

@@ -82,7 +82,7 @@ void TM_MFRC522_InitPins(void)
 	GPIO_Init(SPI_PORT, SPI_RST, GPIO_MODE_OUT_PP_HIGH_SLOW);				  // Inicializace RST
 	GPIO_WriteHigh(SPI_PORT, SPI_RST);										  // Reset RFID čtečky
 	CS_H;																	  // Konec komunikace
-	GPIO_WriteLow(SPIO_PORT, SPI_RST);
+	GPIO_WriteLow(SPI_PORT, SPI_RST);
 }
 /////////////////////////////////////////////////////////////////////
 //! Funkce na zápis do registru MFRC522
