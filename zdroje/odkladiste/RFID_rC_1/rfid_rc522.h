@@ -55,7 +55,7 @@ typedef enum
 #define PICC_REQIDL 0x26	// find the antenna area does not enter hibernation
 #define PICC_REQALL 0x52	// find all the cards antenna area
 #define PICC_ANTICOLL 0x93	// anti-collision
-#define PICC_SElECTTAG 0x93 // election card
+#define PICC_SELECTTAG 0x93 // election card
 #define PICC_AUTHENT1A 0x60 // authentication key A
 #define PICC_AUTHENT1B 0x61 // authentication key B
 #define PICC_READ 0x30		// Read Block

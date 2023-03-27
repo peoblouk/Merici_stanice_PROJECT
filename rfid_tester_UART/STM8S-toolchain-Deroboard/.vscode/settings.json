@@ -1,0 +1,13 @@
+{
+    "cSpell.enabled": false,
+    "files.exclude": {
+        "build*/": true
+    },
+    "clangd.arguments": [
+        "--header-insertion=never"
+    ],
+    "files.associations": {
+        "*.c": "c",
+        "rfid_uart.h": "c"
+    }
+}

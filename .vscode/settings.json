@@ -4,6 +4,7 @@
         "stm8s.h": "c",
         "encoder.h": "c",
         "rfid_rc522.h": "c",
-        "milis.h": "c"
+        "milis.h": "c",
+        "rfid_uart.h": "c"
     }
 }

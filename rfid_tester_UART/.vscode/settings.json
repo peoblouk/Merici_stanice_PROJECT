@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.c": "c",
+        "rfid_uart.h": "c",
+        "stm8s.h": "c"
+    }
+}
