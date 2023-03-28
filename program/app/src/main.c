@@ -2,7 +2,7 @@
 #include "delay.h"
 #include "LCD_I2C.h"
 #include "milis.h"
-// #include "rfid_rc522.h"
+#include "rfid_rc522.h"
 
 //! Makra
 // Indikační LED
@@ -62,7 +62,7 @@ void otoceni_nalevo() // Otočení enkodéru vlevo
  */
 //! Main program loop
 int main(void)
-{ 
+{
     setup(); // Inicializace všech periferií
 
     //? Uživatel přihlášen

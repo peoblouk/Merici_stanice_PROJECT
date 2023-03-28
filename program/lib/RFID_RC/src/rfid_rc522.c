@@ -9,11 +9,11 @@
 #include "rfid_rc522.h"
 /////////////////////////////////////////////////////////////////////
 //! Funkce na inicializaci RFID čtečky
-void TM_MFRC522_Init(void)
+void RC522_Init(void)
 {
 	// Clock konfigurace
 	CLK_PeripheralClockConfig(CLK_PERIPHERAL_SPI, ENABLE); // Nahrada za MFRC522_CS_RCC
-	TM_MFRC522_InitPins();
+	RC522_InitPins();
 
 	// SPI konfigurace
 	SPI_DeInit();
@@ -23,41 +23,45 @@ void TM_MFRC522_Init(void)
 			 SPI_NSS_SOFT, 0x07);
 	SPI_Cmd(ENABLE);
 
-	TM_MFRC522_Reset();
+	RC522_Reset();
 
-	TM_MFRC522_WriteRegister(MFRC522_REG_T_MODE, 0x8D); // TAuto=1; timer starts automatically at the end of the transmission in all communication modes at all speeds
-	TM_MFRC522_WriteRegister(MFRC522_REG_T_PRESCALER, 0x3E);
-	TM_MFRC522_WriteRegister(MFRC522_REG_T_RELOAD_L, 30);
-	TM_MFRC522_WriteRegister(MFRC522_REG_T_RELOAD_H, 0);
+	RC522_WriteRegister(MFRC522_REG_T_MODE, 0x8D); // TAuto=1; timer starts automatically at the end of the transmission in all communication modes at all speeds
+	RC522_WriteRegister(MFRC522_REG_T_PRESCALER, 0x3E);
+	RC522_WriteRegister(MFRC522_REG_T_RELOAD_L, 30);
+	RC522_WriteRegister(MFRC522_REG_T_RELOAD_H, 0);
 
 	/* 48dB gain */
-	TM_MFRC522_WriteRegister(MFRC522_REG_RF_CFG, 0x70);
-	TM_MFRC522_WriteRegister(MFRC522_REG_TX_AUTO, 0x40); // Defaultně 100% modulace - oddělený register ModGsPReg
-	TM_MFRC522_WriteRegister(MFRC522_REG_MODE, 0x3D);
-	TM_MFRC522_AntennaOn();		 // Zapni anténu
+	RC522_WriteRegister(MFRC522_REG_RF_CFG, 0x70);
+	RC522_WriteRegister(MFRC522_REG_TX_AUTO, 0x40); // Defaultně 100% modulace - oddělený register ModGsPReg
+	RC522_WriteRegister(MFRC522_REG_MODE, 0x3D);
+	RC522_AntennaOn();			 // Zapni anténu
 	SPI_SendData(MFRC522_DUMMY); // TODO Nevím úplně proč poslat dva DUMMY bity
 	SPI_SendData(MFRC522_DUMMY);
 }
 /////////////////////////////////////////////////////////////////////
 //! Funkce pro kontrolu ID karty
-TM_MFRC522_Status_t TM_MFRC522_Check(uint8_t *id)
+RC522_Status_t RC522_Check(uint8_t *id)
 {
-	TM_MFRC522_Status_t status;
+	RC522_Status_t status;
 	// Find cards, return card type
-	status = TM_MFRC522_Request(PICC_REQIDL, id);
+	status = RC522_Request(PICC_REQIDL, id);
 	if (status == MI_OK)
 	{
 		// Card detected
 		// Anti-collision, return card serial number 4 bytes
-		status = TM_MFRC522_Anticoll(id);
+		status = RC522_Anticoll(id);
 	}
-	TM_MFRC522_Halt(); // Command card into hibernation
+	else
+	{
+		status = MI_ERR;
+	}
+	RC522_Halt(); // Command card into hibernation
 
 	return status;
 }
 /////////////////////////////////////////////////////////////////////
 //! Funkce pro porovnání dvou ID karet
-TM_MFRC522_Status_t TM_MFRC522_Compare(uint8_t *CardID, uint8_t *CompareID)
+RC522_Status_t RC522_Compare(uint8_t *CardID, uint8_t *CompareID)
 {
 	uint8_t i;
 	for (i = 0; i < 5; i++)
@@ -71,7 +75,7 @@ TM_MFRC522_Status_t TM_MFRC522_Compare(uint8_t *CardID, uint8_t *CompareID)
 }
 /////////////////////////////////////////////////////////////////////
 //! Funkce na inicializaaci pinů pro práci s SPI
-void TM_MFRC522_InitPins(void)
+void RC522_InitPins(void)
 {
 	// Enable clock
 	CLK_PeripheralClockConfig(CLK_PERIPHERAL_SPI, ENABLE);
@@ -90,7 +94,7 @@ void TM_MFRC522_InitPins(void)
 }
 /////////////////////////////////////////////////////////////////////
 //! Funkce na zápis do registru MFRC522
-void TM_MFRC522_WriteRegister(uint8_t addr, uint8_t val)
+void RC522_WriteRegister(uint8_t addr, uint8_t val)
 {
 	CS_L;							  // Začátek komunikace
 	SPI_SendData((addr << 1) & 0x7E); // Zvolení registru
@@ -107,7 +111,7 @@ void TM_MFRC522_WriteRegister(uint8_t addr, uint8_t val)
 /////////////////////////////////////////////////////////////////////
 //! Funkce na čtení z registru MFRC522
 char temp = 0;
-uint8_t TM_MFRC522_ReadRegister(uint8_t addr)
+uint8_t RC522_ReadRegister(uint8_t addr)
 {
 	uint8_t val = 0;						   // Lokální proměnná pro vracení hodnoty, kterou jsme si přečetli z registru
 	CS_L;									   // Začátek komunikace
@@ -118,7 +122,7 @@ uint8_t TM_MFRC522_ReadRegister(uint8_t addr)
 
 	while (SPI_GetFlagStatus(SPI_FLAG_RXNE) == RESET)
 		;
-	temp = SPI_ReceiveData(); // Ulož data do proměnné //TODO musí se dořešit
+	temp = SPI_ReceiveData(); // Ulož data do proměnné
 	SPI_SendData(MFRC522_DUMMY);
 
 	//? Opakuji
@@ -126,56 +130,56 @@ uint8_t TM_MFRC522_ReadRegister(uint8_t addr)
 		; // Čekám, než obdržím něco do bufferu
 	while (SPI_GetFlagStatus(SPI_FLAG_RXNE) == RESET)
 		;
-	val = SPI_ReceiveData(); // Ulož data do proměnné //TODO musí se dořešit
+	val = SPI_ReceiveData(); // Ulož data do proměnné
 	CS_H;					 // Ukončení komunikace
 	return val;
 }
 /////////////////////////////////////////////////////////////////////
 //! Funkce na nastavení masky
-void TM_MFRC522_SetBitMask(uint8_t reg, uint8_t mask)
+void RC522_SetBitMask(uint8_t reg, uint8_t mask)
 {
-	TM_MFRC522_WriteRegister(reg, TM_MFRC522_ReadRegister(reg) | mask); // Zapiš do registru
+	RC522_WriteRegister(reg, RC522_ReadRegister(reg) | mask); // Zapiš do registru
 }
 /////////////////////////////////////////////////////////////////////
-void TM_MFRC522_ClearBitMask(uint8_t reg, uint8_t mask)
+void RC522_ClearBitMask(uint8_t reg, uint8_t mask)
 {
-	TM_MFRC522_WriteRegister(reg, TM_MFRC522_ReadRegister(reg) & (~mask));
+	RC522_WriteRegister(reg, RC522_ReadRegister(reg) & (~mask));
 }
 /////////////////////////////////////////////////////////////////////
 //! Funkce na zapnutí antény MFRC522
-void TM_MFRC522_AntennaOn(void)
+void RC522_AntennaOn(void)
 {
 	uint8_t temp;
 
-	temp = TM_MFRC522_ReadRegister(MFRC522_REG_TX_CONTROL);
+	temp = RC522_ReadRegister(MFRC522_REG_TX_CONTROL);
 	if (!(temp & 0x03))
 	{
-		TM_MFRC522_SetBitMask(MFRC522_REG_TX_CONTROL, 0x03);
+		RC522_SetBitMask(MFRC522_REG_TX_CONTROL, 0x03);
 	}
 }
 /////////////////////////////////////////////////////////////////////
 //! Funkce na vypnutí antény MFRC522
-void TM_MFRC522_AntennaOff(void)
+void RC522_AntennaOff(void)
 {
-	TM_MFRC522_ClearBitMask(MFRC522_REG_TX_CONTROL, 0x03);
+	RC522_ClearBitMask(MFRC522_REG_TX_CONTROL, 0x03);
 }
 /////////////////////////////////////////////////////////////////////
 //! Funkce na reset registru
-void TM_MFRC522_Reset(void)
+void RC522_Reset(void)
 {
-	TM_MFRC522_WriteRegister(MFRC522_REG_COMMAND, PCD_RESETPHASE);
+	RC522_WriteRegister(MFRC522_REG_COMMAND, PCD_RESETPHASE);
 }
 /////////////////////////////////////////////////////////////////////
 // TODO zjistit k čemu tato funkce je
-TM_MFRC522_Status_t TM_MFRC522_Request(uint8_t reqMode, uint8_t *TagType)
+RC522_Status_t RC522_Request(uint8_t reqMode, uint8_t *TagType)
 {
-	TM_MFRC522_Status_t status;
+	RC522_Status_t status;
 	uint16_t backBits; // The received data bits
 
-	TM_MFRC522_WriteRegister(MFRC522_REG_BIT_FRAMING, 0x07); // TxLastBists = BitFramingReg[2..0]	???
+	RC522_WriteRegister(MFRC522_REG_BIT_FRAMING, 0x07); // TxLastBists = BitFramingReg[2..0]	???
 
 	TagType[0] = reqMode;
-	status = TM_MFRC522_ToCard(PCD_TRANSCEIVE, TagType, 1, TagType, &backBits);
+	status = RC522_ToCard(PCD_TRANSCEIVE, TagType, 1, TagType, &backBits);
 
 	if ((status != MI_OK) || (backBits != 0x10))
 	{
@@ -186,9 +190,9 @@ TM_MFRC522_Status_t TM_MFRC522_Request(uint8_t reqMode, uint8_t *TagType)
 }
 /////////////////////////////////////////////////////////////////////
 //! Funkce na zápis na kartu
-TM_MFRC522_Status_t TM_MFRC522_ToCard(uint8_t command, uint8_t *sendData, uint8_t sendLen, uint8_t *backData, uint16_t *backLen)
+RC522_Status_t RC522_ToCard(uint8_t command, uint8_t *sendData, uint8_t sendLen, uint8_t *backData, uint16_t *backLen)
 {
-	TM_MFRC522_Status_t status = MI_ERR;
+	RC522_Status_t status = MI_ERR;
 	uint8_t irqEn = 0x00;
 	uint8_t waitIRq = 0x00;
 	uint8_t lastBits;
@@ -213,22 +217,22 @@ TM_MFRC522_Status_t TM_MFRC522_ToCard(uint8_t command, uint8_t *sendData, uint8_
 		break;
 	}
 
-	TM_MFRC522_WriteRegister(MFRC522_REG_COMM_IE_N, irqEn | 0x80);
-	TM_MFRC522_ClearBitMask(MFRC522_REG_COMM_IRQ, 0x80);
-	TM_MFRC522_SetBitMask(MFRC522_REG_FIFO_LEVEL, 0x80);
-	TM_MFRC522_WriteRegister(MFRC522_REG_COMMAND, PCD_IDLE);
+	RC522_WriteRegister(MFRC522_REG_COMM_IE_N, irqEn | 0x80);
+	RC522_ClearBitMask(MFRC522_REG_COMM_IRQ, 0x80);
+	RC522_SetBitMask(MFRC522_REG_FIFO_LEVEL, 0x80);
+	RC522_WriteRegister(MFRC522_REG_COMMAND, PCD_IDLE);
 
 	// Writing data to the FIFO
 	for (i = 0; i < sendLen; i++)
 	{
-		TM_MFRC522_WriteRegister(MFRC522_REG_FIFO_DATA, sendData[i]);
+		RC522_WriteRegister(MFRC522_REG_FIFO_DATA, sendData[i]);
 	}
 
 	// Execute the command
-	TM_MFRC522_WriteRegister(MFRC522_REG_COMMAND, command);
+	RC522_WriteRegister(MFRC522_REG_COMMAND, command);
 	if (command == PCD_TRANSCEIVE)
 	{
-		TM_MFRC522_SetBitMask(MFRC522_REG_BIT_FRAMING, 0x80); // StartSend=1,transmission of data starts
+		RC522_SetBitMask(MFRC522_REG_BIT_FRAMING, 0x80); // StartSend=1,transmission of data starts
 	}
 
 	// Waiting to receive data to complete
@@ -237,15 +241,15 @@ TM_MFRC522_Status_t TM_MFRC522_ToCard(uint8_t command, uint8_t *sendData, uint8_
 	{
 		// CommIrqReg[7..0]
 		// Set1 TxIRq RxIRq IdleIRq HiAlerIRq LoAlertIRq ErrIRq TimerIRq
-		n = TM_MFRC522_ReadRegister(MFRC522_REG_COMM_IRQ);
+		n = RC522_ReadRegister(MFRC522_REG_COMM_IRQ);
 		i--;
 	} while ((i != 0) && !(n & 0x01) && !(n & waitIRq));
 
-	TM_MFRC522_ClearBitMask(MFRC522_REG_BIT_FRAMING, 0x80); // StartSend=0
+	RC522_ClearBitMask(MFRC522_REG_BIT_FRAMING, 0x80); // StartSend=0
 
 	if (i != 0)
 	{
-		if (!(TM_MFRC522_ReadRegister(MFRC522_REG_ERROR) & 0x1B))
+		if (!(RC522_ReadRegister(MFRC522_REG_ERROR) & 0x1B))
 		{
 			status = MI_OK;
 			if (n & irqEn & 0x01)
@@ -255,8 +259,8 @@ TM_MFRC522_Status_t TM_MFRC522_ToCard(uint8_t command, uint8_t *sendData, uint8_
 
 			if (command == PCD_TRANSCEIVE)
 			{
-				n = TM_MFRC522_ReadRegister(MFRC522_REG_FIFO_LEVEL);
-				lastBits = TM_MFRC522_ReadRegister(MFRC522_REG_CONTROL) & 0x07;
+				n = RC522_ReadRegister(MFRC522_REG_FIFO_LEVEL);
+				lastBits = RC522_ReadRegister(MFRC522_REG_CONTROL) & 0x07;
 				if (lastBits)
 				{
 					*backLen = (n - 1) * 8 + lastBits;
@@ -278,7 +282,7 @@ TM_MFRC522_Status_t TM_MFRC522_ToCard(uint8_t command, uint8_t *sendData, uint8_
 				// Reading the received data in FIFO
 				for (i = 0; i < n; i++)
 				{
-					backData[i] = TM_MFRC522_ReadRegister(MFRC522_REG_FIFO_DATA);
+					backData[i] = RC522_ReadRegister(MFRC522_REG_FIFO_DATA);
 				}
 			}
 		}
@@ -291,18 +295,18 @@ TM_MFRC522_Status_t TM_MFRC522_ToCard(uint8_t command, uint8_t *sendData, uint8_
 	return status;
 }
 /////////////////////////////////////////////////////////////////////
-TM_MFRC522_Status_t TM_MFRC522_Anticoll(uint8_t *serNum)
+RC522_Status_t RC522_Anticoll(uint8_t *serNum)
 {
-	TM_MFRC522_Status_t status;
+	RC522_Status_t status;
 	uint8_t i;
 	uint8_t serNumCheck = 0;
 	uint16_t unLen;
 
-	TM_MFRC522_WriteRegister(MFRC522_REG_BIT_FRAMING, 0x00); // TxLastBists = BitFramingReg[2..0]
+	RC522_WriteRegister(MFRC522_REG_BIT_FRAMING, 0x00); // TxLastBists = BitFramingReg[2..0]
 
 	serNum[0] = PICC_ANTICOLL;
 	serNum[1] = 0x20;
-	status = TM_MFRC522_ToCard(PCD_TRANSCEIVE, serNum, 2, serNum, &unLen);
+	status = RC522_ToCard(PCD_TRANSCEIVE, serNum, 2, serNum, &unLen);
 
 	if (status == MI_OK)
 	{
@@ -320,39 +324,39 @@ TM_MFRC522_Status_t TM_MFRC522_Anticoll(uint8_t *serNum)
 }
 /////////////////////////////////////////////////////////////////////
 //! Funkce na detekci CRC kodu
-void TM_MFRC522_CalculateCRC(uint8_t *pIndata, uint8_t len, uint8_t *pOutData)
+void RC522_CalculateCRC(uint8_t *pIndata, uint8_t len, uint8_t *pOutData)
 {
 	uint8_t i, n;
 
-	TM_MFRC522_ClearBitMask(MFRC522_REG_DIV_IRQ, 0x04);	 // CRCIrq = 0
-	TM_MFRC522_SetBitMask(MFRC522_REG_FIFO_LEVEL, 0x80); // Clear the FIFO pointer
+	RC522_ClearBitMask(MFRC522_REG_DIV_IRQ, 0x04);	// CRCIrq = 0
+	RC522_SetBitMask(MFRC522_REG_FIFO_LEVEL, 0x80); // Clear the FIFO pointer
 	// Write_MFRC522(CommandReg, PCD_IDLE);
 
 	// Writing data to the FIFO
 	for (i = 0; i < len; i++)
 	{
-		TM_MFRC522_WriteRegister(MFRC522_REG_FIFO_DATA, *(pIndata + i));
+		RC522_WriteRegister(MFRC522_REG_FIFO_DATA, *(pIndata + i));
 	}
-	TM_MFRC522_WriteRegister(MFRC522_REG_COMMAND, PCD_CALCCRC);
+	RC522_WriteRegister(MFRC522_REG_COMMAND, PCD_CALCCRC);
 
 	// Wait CRC calculation is complete
 	i = 0xFF;
 	do
 	{
-		n = TM_MFRC522_ReadRegister(MFRC522_REG_DIV_IRQ);
+		n = RC522_ReadRegister(MFRC522_REG_DIV_IRQ);
 		i--;
 	} while ((i != 0) && !(n & 0x04)); // CRCIrq = 1
 
 	// Read CRC calculation result
-	pOutData[0] = TM_MFRC522_ReadRegister(MFRC522_REG_CRC_RESULT_L);
-	pOutData[1] = TM_MFRC522_ReadRegister(MFRC522_REG_CRC_RESULT_M);
+	pOutData[0] = RC522_ReadRegister(MFRC522_REG_CRC_RESULT_L);
+	pOutData[1] = RC522_ReadRegister(MFRC522_REG_CRC_RESULT_M);
 }
 /////////////////////////////////////////////////////////////////////
 //! Funkce pro výběr tagu
-uint8_t TM_MFRC522_SelectTag(uint8_t *serNum)
+uint8_t RC522_SelectTag(uint8_t *serNum)
 {
 	uint8_t i;
-	TM_MFRC522_Status_t status;
+	RC522_Status_t status;
 	uint8_t size;
 	uint16_t recvBits;
 	uint8_t buffer[9];
@@ -363,8 +367,8 @@ uint8_t TM_MFRC522_SelectTag(uint8_t *serNum)
 	{
 		buffer[i + 2] = *(serNum + i);
 	}
-	TM_MFRC522_CalculateCRC(buffer, 7, &buffer[7]); //??
-	status = TM_MFRC522_ToCard(PCD_TRANSCEIVE, buffer, 9, buffer, &recvBits);
+	RC522_CalculateCRC(buffer, 7, &buffer[7]); //??
+	status = RC522_ToCard(PCD_TRANSCEIVE, buffer, 9, buffer, &recvBits);
 
 	if ((status == MI_OK) && (recvBits == 0x18))
 	{
@@ -379,9 +383,9 @@ uint8_t TM_MFRC522_SelectTag(uint8_t *serNum)
 }
 /////////////////////////////////////////////////////////////////////
 //! Funkce zkoušku hesla
-TM_MFRC522_Status_t TM_MFRC522_Auth(uint8_t authMode, uint8_t BlockAddr, uint8_t *Sectorkey, uint8_t *serNum)
+RC522_Status_t RC522_Auth(uint8_t authMode, uint8_t BlockAddr, uint8_t *Sectorkey, uint8_t *serNum)
 {
-	TM_MFRC522_Status_t status;
+	RC522_Status_t status;
 	uint16_t recvBits;
 	uint8_t i;
 	uint8_t buff[12];
@@ -397,9 +401,9 @@ TM_MFRC522_Status_t TM_MFRC522_Auth(uint8_t authMode, uint8_t BlockAddr, uint8_t
 	{
 		buff[i + 8] = *(serNum + i);
 	}
-	status = TM_MFRC522_ToCard(PCD_AUTHENT, buff, 12, buff, &recvBits);
+	status = RC522_ToCard(PCD_AUTHENT, buff, 12, buff, &recvBits);
 
-	if ((status != MI_OK) || (!(TM_MFRC522_ReadRegister(MFRC522_REG_STATUS2) & 0x08)))
+	if ((status != MI_OK) || (!(RC522_ReadRegister(MFRC522_REG_STATUS2) & 0x08)))
 	{
 		status = MI_ERR;
 	}
@@ -408,15 +412,15 @@ TM_MFRC522_Status_t TM_MFRC522_Auth(uint8_t authMode, uint8_t BlockAddr, uint8_t
 }
 /////////////////////////////////////////////////////////////////////
 //! Funkce na čtení po zadání úspěšně hesla
-TM_MFRC522_Status_t TM_MFRC522_Read(uint8_t blockAddr, uint8_t *recvData)
+RC522_Status_t RC522_Read(uint8_t blockAddr, uint8_t *recvData)
 {
-	TM_MFRC522_Status_t status;
+	RC522_Status_t status;
 	uint16_t unLen;
 
 	recvData[0] = PICC_READ;
 	recvData[1] = blockAddr;
-	TM_MFRC522_CalculateCRC(recvData, 2, &recvData[2]);
-	status = TM_MFRC522_ToCard(PCD_TRANSCEIVE, recvData, 4, recvData, &unLen);
+	RC522_CalculateCRC(recvData, 2, &recvData[2]);
+	status = RC522_ToCard(PCD_TRANSCEIVE, recvData, 4, recvData, &unLen);
 
 	if ((status != MI_OK) || (unLen != 0x90))
 	{
@@ -427,17 +431,17 @@ TM_MFRC522_Status_t TM_MFRC522_Read(uint8_t blockAddr, uint8_t *recvData)
 }
 
 //! Funkce na zápis na tag po zadání úspěšně hesla
-TM_MFRC522_Status_t TM_MFRC522_Write(uint8_t blockAddr, uint8_t *writeData)
+RC522_Status_t RC522_Write(uint8_t blockAddr, uint8_t *writeData)
 {
-	TM_MFRC522_Status_t status;
+	RC522_Status_t status;
 	uint16_t recvBits;
 	uint8_t i;
 	uint8_t buff[18];
 
 	buff[0] = PICC_WRITE;
 	buff[1] = blockAddr;
-	TM_MFRC522_CalculateCRC(buff, 2, &buff[2]);
-	status = TM_MFRC522_ToCard(PCD_TRANSCEIVE, buff, 4, buff, &recvBits);
+	RC522_CalculateCRC(buff, 2, &buff[2]);
+	status = RC522_ToCard(PCD_TRANSCEIVE, buff, 4, buff, &recvBits);
 
 	if ((status != MI_OK) || (recvBits != 4) || ((buff[0] & 0x0F) != 0x0A))
 	{
@@ -451,8 +455,8 @@ TM_MFRC522_Status_t TM_MFRC522_Write(uint8_t blockAddr, uint8_t *writeData)
 		{
 			buff[i] = *(writeData + i);
 		}
-		TM_MFRC522_CalculateCRC(buff, 16, &buff[16]);
-		status = TM_MFRC522_ToCard(PCD_TRANSCEIVE, buff, 18, buff, &recvBits);
+		RC522_CalculateCRC(buff, 16, &buff[16]);
+		status = RC522_ToCard(PCD_TRANSCEIVE, buff, 18, buff, &recvBits);
 
 		if ((status != MI_OK) || (recvBits != 4) || ((buff[0] & 0x0F) != 0x0A))
 		{
@@ -464,14 +468,14 @@ TM_MFRC522_Status_t TM_MFRC522_Write(uint8_t blockAddr, uint8_t *writeData)
 }
 /////////////////////////////////////////////////////////////////////
 //! Funkce na přerušení RFID čtečky
-void TM_MFRC522_Halt(void)
+void RC522_Halt(void)
 {
 	uint16_t unLen;
 	uint8_t buff[4];
 
 	buff[0] = PICC_HALT;
 	buff[1] = 0;
-	TM_MFRC522_CalculateCRC(buff, 2, &buff[2]);
+	RC522_CalculateCRC(buff, 2, &buff[2]);
 
-	TM_MFRC522_ToCard(PCD_TRANSCEIVE, buff, 4, buff, &unLen);
+	RC522_ToCard(PCD_TRANSCEIVE, buff, 4, buff, &unLen);
 }

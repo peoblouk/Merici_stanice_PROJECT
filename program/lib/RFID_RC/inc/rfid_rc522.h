@@ -8,8 +8,8 @@
 //! Tato knihovna používá SPI pro čtení MFRC522 chipu
 // Funguje na 13,56 MHz
 
-#ifndef TM_MFRC522_H
-#define TM_MFRC522_H 100
+#ifndef RC522_H
+#define RC522_H
 
 #include "stm8s.h"
 
@@ -28,8 +28,8 @@
 #define SPI_MOSI GPIO_PIN_6 // SPI MOSI
 #define SPI_MISO GPIO_PIN_7 // SPI MISO
 
-#define CS_H GPIO_WriteHigh(CHIP_SELECT_PORT, CHIP_SELECT_PIN)
-#define CS_L GPIO_WriteLow(CHIP_SELECT_PORT, CHIP_SELECT_PIN)
+#define CS_H GPIO_WriteHigh(CHIP_SELECT_PORT, CHIP_SELECT_PIN) // Konec komunikace
+#define CS_L GPIO_WriteLow(CHIP_SELECT_PORT, CHIP_SELECT_PIN)  // Začátek komunikace
 /******************************************************************/
 
 /**
@@ -40,7 +40,7 @@ typedef enum
 	MI_OK = 0,
 	MI_NOTAGERR,
 	MI_ERR
-} TM_MFRC522_Status_t;
+} RC522_Status_t;
 
 /////////////////////////////////////////////////////////////////////
 /* MFRC522 Commands */
@@ -142,11 +142,13 @@ typedef enum
 #define MFRC522_MAX_LEN 16
 /////////////////////////////////////////////////////////////////////
 //! Funkce na inicializaci RFID čtečky
-extern void TM_MFRC522_Init(void);
-/**[-]**/
+extern void RC522_Init(void);
+/**
+ * Tato funkce slouží pro inicializaci SPI sběrnice a zároveň inicializace pinů
+ **/
 /////////////////////////////////////////////////////////////////////
 //! Funkce pro kontrolu ID karty
-extern TM_MFRC522_Status_t TM_MFRC522_Check(uint8_t *id);
+extern RC522_Status_t RC522_Check(uint8_t *id);
 /**
 	Tato funkce vráti status MI_OK, pokud je karta detekována
 	parametry:
@@ -157,7 +159,7 @@ extern TM_MFRC522_Status_t TM_MFRC522_Check(uint8_t *id);
 	**/
 /////////////////////////////////////////////////////////////////////
 //! Funkce pro porovnání dvou ID karet
-extern TM_MFRC522_Status_t TM_MFRC522_Compare(uint8_t *CardID, uint8_t *CompareID);
+extern RC522_Status_t RC522_Compare(uint8_t *CardID, uint8_t *CompareID);
 /**	Použitelné pokud známe dvě ID karet třeba z databáze a chce je porovnat s přečtenou kartou
 	parametry funkce:
 		uint8_t* CardID: je parametr pro přečtenou kartu
@@ -168,22 +170,22 @@ extern TM_MFRC522_Status_t TM_MFRC522_Compare(uint8_t *CardID, uint8_t *CompareI
 	**/
 /////////////////////////////////////////////////////////////////////
 //! Funkce, které používají pro funkci čtečky a jsou private
-extern void TM_MFRC522_InitPins(void);
-extern void TM_MFRC522_WriteRegister(uint8_t addr, uint8_t val);
-extern uint8_t TM_MFRC522_ReadRegister(uint8_t addr);
-extern void TM_MFRC522_SetBitMask(uint8_t reg, uint8_t mask);
-extern void TM_MFRC522_ClearBitMask(uint8_t reg, uint8_t mask);
-extern void TM_MFRC522_AntennaOn(void);
-extern void TM_MFRC522_AntennaOff(void);
-extern void TM_MFRC522_Reset(void);
-extern TM_MFRC522_Status_t TM_MFRC522_Request(uint8_t reqMode, uint8_t *TagType);
-extern TM_MFRC522_Status_t TM_MFRC522_ToCard(uint8_t command, uint8_t *sendData, uint8_t sendLen, uint8_t *backData, uint16_t *backLen);
-extern TM_MFRC522_Status_t TM_MFRC522_Anticoll(uint8_t *serNum);
-extern void TM_MFRC522_CalculateCRC(uint8_t *pIndata, uint8_t len, uint8_t *pOutData);
-extern uint8_t TM_MFRC522_SelectTag(uint8_t *serNum);
-extern TM_MFRC522_Status_t TM_MFRC522_Auth(uint8_t authMode, uint8_t BlockAddr, uint8_t *Sectorkey, uint8_t *serNum);
-extern TM_MFRC522_Status_t TM_MFRC522_Read(uint8_t blockAddr, uint8_t *recvData);
-extern TM_MFRC522_Status_t TM_MFRC522_Write(uint8_t blockAddr, uint8_t *writeData);
-extern void TM_MFRC522_Halt(void);
+void RC522_InitPins(void);																								// Inicializace pinů
+void RC522_WriteRegister(uint8_t addr, uint8_t val);																	// Zápis DO registru MFRC522
+uint8_t RC522_ReadRegister(uint8_t addr);																				// Čtení z registrů MFRC522
+void RC522_SetBitMask(uint8_t reg, uint8_t mask);																		// Nastavení bitové masky
+void RC522_ClearBitMask(uint8_t reg, uint8_t mask);																		// SMazení bitové masky
+void RC522_AntennaOn(void);																								// Zapnutí antény
+void RC522_AntennaOff(void);																							// Výpnutí antény
+void RC522_Reset(void);																									// Reset registrů
+RC522_Status_t RC522_Request(uint8_t reqMode, uint8_t *TagType);														// Požadavek od registru
+RC522_Status_t RC522_ToCard(uint8_t command, uint8_t *sendData, uint8_t sendLen, uint8_t *backData, uint16_t *backLen); // Zápis na kartu
+RC522_Status_t RC522_Anticoll(uint8_t *serNum);
+void RC522_CalculateCRC(uint8_t *pIndata, uint8_t len, uint8_t *pOutData); // Kalkulace CRC
+uint8_t RC522_SelectTag(uint8_t *serNum);								   // Select typu tágu
+RC522_Status_t RC522_Auth(uint8_t authMode, uint8_t BlockAddr, uint8_t *Sectorkey, uint8_t *serNum);
+RC522_Status_t RC522_Read(uint8_t blockAddr, uint8_t *recvData);
+RC522_Status_t RC522_Write(uint8_t blockAddr, uint8_t *writeData);
+void RC522_Halt(void);
 
 #endif
