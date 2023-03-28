@@ -25,9 +25,9 @@ void RC522_Init(void)
 
 	RC522_Reset();
 
-	RC522_WriteRegister(MFRC522_REG_T_MODE, 0x8D); // TAuto=1; timer starts automatically at the end of the transmission in all communication modes at all speeds
-	RC522_WriteRegister(MFRC522_REG_T_PRESCALER, 0x3E);
-	RC522_WriteRegister(MFRC522_REG_T_RELOAD_L, 30);
+	RC522_WriteRegister(MFRC522_REG_T_MODE, 0x8D);		// TAuto=1; timer starts automatically at the end of the transmission in all communication modes at all speeds
+	RC522_WriteRegister(MFRC522_REG_T_PRESCALER, 0x3E); // Předdělička
+	RC522_WriteRegister(MFRC522_REG_T_RELOAD_L, 30);	// Reload registru
 	RC522_WriteRegister(MFRC522_REG_T_RELOAD_H, 0);
 
 	/* 48dB gain */

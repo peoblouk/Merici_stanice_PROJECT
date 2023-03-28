@@ -5,7 +5,7 @@
  * @modify date 01-02-2023 - 19:48:00
  * @desc [Mifare MFRC522 RFID Card reader library]
  */
-//! Tato knihovna používá SPI pro čtení MFRC522 chipu
+//! Tato knihovna používá SPI pro čtení RFID karet pomocí RC522
 // Funguje na 13,56 MHz
 
 #ifndef RC522_H
@@ -13,28 +13,24 @@
 
 #include "stm8s.h"
 
-// #define MFRC522_CS_RCC RCC_AHB1Periph_GPIOG // Mělo by být nastavení clocku
-
 /****************** MAKRA *******************************************/
 // Definice SPI pinů
-#define CHIP_SELECT_PORT GPIOC	   // SPI chip sleect port
-#define CHIP_SELECT_PIN GPIO_PIN_4 // SPI chip select pin
+#define CHIP_SELECT_PORT GPIOC	   //? SPI chip select port
+#define CHIP_SELECT_PIN GPIO_PIN_4 //? SPI chip select pin
 
-#define SPI_PORT GPIOC	   // SPI port
-#define SPI_RST GPIO_PIN_3 // SPI RST
+#define SPI_PORT GPIOC	   //? SPI port
+#define SPI_RST GPIO_PIN_3 //? SPI RST
 
-#define SPI_SCK GPIO_PIN_5 // SPI SCK
+#define SPI_SCK GPIO_PIN_5 //? SPI SCK
 
-#define SPI_MOSI GPIO_PIN_6 // SPI MOSI
-#define SPI_MISO GPIO_PIN_7 // SPI MISO
+#define SPI_MOSI GPIO_PIN_6 //? SPI MOSI
+#define SPI_MISO GPIO_PIN_7 //? SPI MISO
 
 #define CS_H GPIO_WriteHigh(CHIP_SELECT_PORT, CHIP_SELECT_PIN) // Konec komunikace
 #define CS_L GPIO_WriteLow(CHIP_SELECT_PORT, CHIP_SELECT_PIN)  // Začátek komunikace
 /******************************************************************/
 
-/**
- * Status enumeration
- */
+//! Status proměnná
 typedef enum
 {
 	MI_OK = 0,
