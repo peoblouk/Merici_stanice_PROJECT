@@ -14,6 +14,7 @@ void TM_MFRC522_Init(void)
 	// Clock konfigurace
 	CLK_PeripheralClockConfig(CLK_PERIPHERAL_SPI, ENABLE); // Nahrada za MFRC522_CS_RCC
 	TM_MFRC522_InitPins();
+
 	// SPI konfigurace
 	SPI_DeInit();
 	CS_L;
@@ -33,7 +34,9 @@ void TM_MFRC522_Init(void)
 	TM_MFRC522_WriteRegister(MFRC522_REG_RF_CFG, 0x70);
 	TM_MFRC522_WriteRegister(MFRC522_REG_TX_AUTO, 0x40); // Defaultně 100% modulace - oddělený register ModGsPReg
 	TM_MFRC522_WriteRegister(MFRC522_REG_MODE, 0x3D);
-	TM_MFRC522_AntennaOn(); // Open the antenna
+	TM_MFRC522_AntennaOn();		 // Zapni anténu
+	SPI_SendData(MFRC522_DUMMY); // TODO Nevím úplně proč poslat dva DUMMY bity
+	SPI_SendData(MFRC522_DUMMY);
 }
 /////////////////////////////////////////////////////////////////////
 //! Funkce pro kontrolu ID karty
@@ -78,18 +81,19 @@ void TM_MFRC522_InitPins(void)
 
 	// CS pin
 	GPIO_Init(CHIP_SELECT_PORT, CHIP_SELECT_PIN, GPIO_MODE_OUT_PP_HIGH_SLOW); // Inicializace CS
-	CS_H;																	  // Konec komunikace
 	GPIO_Init(SPI_PORT, SPI_RST, GPIO_MODE_OUT_PP_HIGH_SLOW);				  // Inicializace RST
-	GPIO_WriteHigh(SPI_PORT, SPI_RST);										  // Reset RFID čtečky
-	CS_H;																	  // Konec komunikace
+
+	// Reset RFID čtečky
+	GPIO_WriteHigh(SPI_PORT, SPI_RST);
 	GPIO_WriteLow(SPI_PORT, SPI_RST);
+	CS_H; // Konec komunikace
 }
 /////////////////////////////////////////////////////////////////////
 //! Funkce na zápis do registru MFRC522
 void TM_MFRC522_WriteRegister(uint8_t addr, uint8_t val)
 {
 	CS_L;							  // Začátek komunikace
-	SPI_SendData((addr << 1) & 0x7E); // Posílání dat
+	SPI_SendData((addr << 1) & 0x7E); // Zvolení registru
 	SPI_SendData(val);				  // Posílání dat
 
 	while ((SPI_GetFlagStatus(SPI_SR_TXE)) == RESET)
@@ -105,7 +109,7 @@ void TM_MFRC522_WriteRegister(uint8_t addr, uint8_t val)
 char temp = 0;
 uint8_t TM_MFRC522_ReadRegister(uint8_t addr)
 {
-	uint8_t val;							   // Lokální proměnná pro uložení
+	uint8_t val = 0;						   // Lokální proměnná pro vracení hodnoty, kterou jsme si přečetli z registru
 	CS_L;									   // Začátek komunikace
 	SPI_SendData(((addr << 1) & 0x7E) | 0x80); // Pošli data
 											   // SPI_SendData(MFRC522_DUMMY);			   // Pošli data
@@ -116,6 +120,7 @@ uint8_t TM_MFRC522_ReadRegister(uint8_t addr)
 		;
 	temp = SPI_ReceiveData(); // Ulož data do proměnné //TODO musí se dořešit
 	SPI_SendData(MFRC522_DUMMY);
+
 	//? Opakuji
 	while ((SPI_GetFlagStatus(SPI_SR_TXE)) == 0)
 		; // Čekám, než obdržím něco do bufferu
