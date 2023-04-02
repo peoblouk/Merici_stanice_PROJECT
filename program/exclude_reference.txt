@@ -23,5 +23,4 @@
 -x _TIM2_UPD_OVF_BRK_IRQHandler
 -x _TIM4_UPD_OVF_IRQHandler
 
--x _TM_MFRC522_AntennaOn
 -x _LCD_I2C_Home

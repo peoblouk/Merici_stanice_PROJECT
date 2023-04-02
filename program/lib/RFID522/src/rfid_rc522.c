@@ -7,6 +7,7 @@
  */
 
 #include "rfid_rc522.h"
+
 /////////////////////////////////////////////////////////////////////
 //! Funkce na inicializaci RFID čtečky
 void RC522_Init(void)
@@ -96,10 +97,10 @@ void RC522_InitPins(void)
 //! Funkce na zápis do registru MFRC522
 void RC522_WriteRegister(uint8_t addr, uint8_t val)
 {
-	CS_L;							  // Začátek komunikace
-	SPI_SendData((addr << 1) & 0x7E); // Zvolení registru
-	SPI_SendData(val);				  // Posílání dat
-
+	CS_L;							   // Začátek komunikace
+	SPI_SendData((addr << 1) & 0x7E);  // Zvolení registru
+	SPI_SendData(val);				   // Posílání dat
+	GPIO_WriteHigh(GPIOD, GPIO_PIN_4); //! TEST
 	while ((SPI_GetFlagStatus(SPI_SR_TXE)) == RESET)
 		; // Čekám, než obdržím něco do bufferu
 
