@@ -1,7 +1,8 @@
-#include "stm8s"
-
 #ifndef PN532_STM
 #define PN532_STM
+
+#include "stm8s.h"
+#include <stdio.h>
 
 /****************** MAKRA *******************************************/
 // Definice SPI pinů
@@ -223,6 +224,9 @@
 // Other Error Definitions
 #define PN532_STATUS_ERROR (1)
 #define PN532_STATUS_OK (0)
+
+int PN532_ReadFrame(PN532 *pn532, uint8_t *response, uint16_t length);
+int PN532_CallFunction(PN532 *pn532, uint8_t command, uint8_t *response, uint16_t response_length, uint8_t *params, uint16_t params_length, uint32_t timeout);
 
 void PN532_Init(void);
 int PN532_Reset(void);

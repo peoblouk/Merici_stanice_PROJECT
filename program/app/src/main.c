@@ -2,7 +2,7 @@
 #include "delay.h"
 #include "LCD_I2C.h"
 #include "milis.h"
-#include "rfid_rc522.h"
+#include "pn532_spi.h"
 
 //! Makra
 // Indikační LED
@@ -17,6 +17,7 @@ uint16_t *encoder_position = 0;                                     // Proměnn�
 uint16_t mtime_key = 0;                                             // Proměnná pro millis
 char *user_list[5] = {"Petr", "Franta", "Honza", "Karel", "David"}; // Uživatelé
 char buffer[48];
+int uid_len;
 
 //! Uživatelské funkce
 void setup(void)
@@ -27,7 +28,8 @@ void setup(void)
     GPIO_Init(LED_PORT, LED_PIN_RED, GPIO_MODE_OUT_PP_LOW_SLOW); // Pin LED RED
     LCD_I2C_Init(0x27, 16, 2);                                   // Inicializace LCD
     LCD_I2C_Print("Inicializace...");                            // Úvodní obrazovka na displej
-    RC522_Init();                                                // Incializace RFID readeru
+    // RC522_Init();                                                // Incializace RFID readeru
+    PN_532_Init(); // Inicializace RFID readeru PN532
     GPIO_Init(GPIOD, GPIO_PIN_4, GPIO_MODE_OUT_PP_LOW_SLOW);
     GPIO_Init(LED_PORT, LED_PIN_GREEN, GPIO_MODE_OUT_PP_LOW_SLOW); // PIN Inicializace proběhla úspěšně
     GPIO_WriteHigh(LED_PORT, LED_PIN_RED);                         // Konec inicializace
@@ -60,23 +62,42 @@ int main(void)
     {
         if ((get_milis() - mtime_key) > 500) // každých 500 ms
         {
-            mtime_key = get_milis();          // milis now
-            LCD_I2C_SetCursor(0, 0);          // Nastavení kurzoru
-            LCD_I2C_Print("Priloz kartu");    // Úvodní obrazovka na displej
-            if (RC522_Check(CardID) == MI_OK) // Karta nalezena
+            mtime_key = get_milis();       // milis now
+            LCD_I2C_SetCursor(0, 0);       // Nastavení kurzoru
+            LCD_I2C_Print("Priloz kartu"); // Úvodní obrazovka na displej
+
+            uid_len = PN532_ReadPassiveTarget(pn532, uid, PN532_MIFARE_ISO14443A, 1000);
+            if (uid_len == PN532_STATUS_ERROR)
             {
-                Status = TRUE;
-                sprintf(buffer, "%x", CardID);
-                LCD_I2C_Print(buffer); // Print ID karty na displej
+                // printf(".");
             }
-            if (RC522_Check(CardID) == MI_ERR) // Karta nenalezena
+            else
             {
-                // char buffer[48];
-                Status = FALSE;
-                LCD_I2C_SetCursor(0, 1);
-                sprintf(buffer, "UID: %x", CardID);
-                LCD_I2C_Print(buffer);
+                // printf("Found card with UID: ");
+                for (uint8_t i = 0; i < uid_len; i++)
+                {
+                    // printf("%02x ", uid[i]);
+                    LCD_I2C_SetCursor(i + 2, 1);
+                    sprintf(buffer, "%02x ", uid[i]);
+                    LCD_I2C_Print(buffer);
+                }
+                // printf("\r\n");
             }
+
+            // if (RC522_Check(CardID) == MI_OK) // Karta nalezena
+            // {
+            //     Status = TRUE;
+            //     sprintf(buffer, "%x", CardID);
+            //     LCD_I2C_Print(buffer); // Print ID karty na displej
+            // }
+            // if (RC522_Check(CardID) == MI_ERR) // Karta nenalezena
+            // {
+            //     // char buffer[48];
+            //     Status = FALSE;
+            //     LCD_I2C_SetCursor(0, 1);
+            //     sprintf(buffer, "UID: %x", CardID);
+            //     LCD_I2C_Print(buffer);
+            // }
             // GPIO_WriteReverse(GPIOD, GPIO_PIN_4);
             // LCD_I2C_Print(buffer); // TODO zjistit, zda se nebude být s ostatními sprintf
         }
