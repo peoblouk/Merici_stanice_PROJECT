@@ -18,7 +18,8 @@
     "encoder.h": "c",
     "milis.h": "c",
     "lcd_i2c_ui.h": "c",
-    "rfid_rc522.h": "c"
+    "rfid_rc522.h": "c",
+    "pn532_spi.h": "c"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }
