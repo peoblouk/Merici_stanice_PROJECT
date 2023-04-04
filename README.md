@@ -26,7 +26,7 @@ Security system
 # PN532 frame
 
 - ZDROJ: `https://os.mbed.com/forum/mbed/topic/3476/?page=1#comment-17524`
-  <img alt="frame" src="foto/frame.png" align = "left">
+  <img alt="frame" src="zdroje/frame.png" align = "left">
 
 # Periferie
 
