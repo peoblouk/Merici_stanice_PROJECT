@@ -5,6 +5,8 @@
         "encoder.h": "c",
         "rfid_rc522.h": "c",
         "milis.h": "c",
-        "rfid_uart.h": "c"
+        "rfid_uart.h": "c",
+        "pn532_spi.h": "c",
+        "stdio.h": "c"
     }
 }
