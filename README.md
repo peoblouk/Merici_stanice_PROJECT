@@ -25,14 +25,14 @@ Security system
 
 # PN532 frame
 
-- zdroj: "https://os.mbed.com/forum/mbed/topic/3476/?page=1#comment-17524"
-  <img alt="frame" src="foto/frame.png" align = "center">
+- ZDROJ: `https://os.mbed.com/forum/mbed/topic/3476/?page=1#comment-17524`
+  <img alt="frame" src="foto/frame.png" align = "left">
 
 # Periferie
 
 - 1x LCD1602 – zobrazovací periferie (sběrnice I2C)
 - 1x PCF8574 – převodník na I2C pro zobrazovací periferii
-- 1x RFID-R522 – čtečka přístupových karet (sběrnice SPI)
+- 1x RFID-PN532 – čtečka přístupových karet (sběrnice SPI)
   <img alt="periferie" src="foto/periferie.jpeg" align = "right">
 
 # Obrázky
