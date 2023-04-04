@@ -22,6 +22,17 @@ void pn532_init(void)
              SPI_NSS_SOFT, 0x07); // Initialize SPI with desired settings
     SPI_Cmd(ENABLE);              // Enable SPI peripheral
 
+    /*
+    spi.write(0x00);
+    spi.write(0x00);
+    spi.write(0xFF);
+    spi.write(0x01);
+    spi.write(0xFF);
+    spi.write(0xD4);
+    spi.write(0x02);
+    spi.write(0x2A);
+    */
+
     // Configure PN532 chip
     uint8_t tx_buf[6] = {0x00, 0x00, 0xFF, 0x03, 0xFD, 0xD4};
     uint8_t rx_buf[6] = {0};
@@ -39,17 +50,29 @@ void pn532_init(void)
 
 uint8_t pn532_send_frame(uint8_t *frame, uint8_t len)
 {
+        // Build frame to send as:
+    // - Preamble (0x00)
+    // - Start code  (0x00, 0xFF)
+    // - Command length (1 byte)
+    // - Command length checksum
+    // - Command bytes
+    // - Checksum
+    // - Postamble (0x00)
+
     CS_L;
     uint8_t *tx_buf;
     uint8_t *rx_buf;
+    //? START SEQUENCE
     tx_buf[len + 1]; // ulož do seznamu přijimaté bity
     rx_buf[len + 1];
     tx_buf[0] = PN532_PREAMBLE;
     tx_buf[1] = PN532_STARTCODE1;
     tx_buf[2] = PN532_STARTCODE2;
     tx_buf[3] = len + 1;
-    tx_buf[4] = ~len + 1;
+    tx_buf[4] = len + 1;
+    //? END OF START SEQUENCE
 
+    //
     for (uint8_t d = 0; d < len; d++)
     {
         tx_buf[5 + d] = frame[d];
@@ -66,7 +89,7 @@ uint8_t pn532_send_frame(uint8_t *frame, uint8_t len)
         ;
     for (uint8_t z = 1; z < len + 7; z++)
     {
-        rx_buf[z] = tx_buf[z]; // todo výřešít
+        rx_buf[z] = SPI_ReceiveData(); // todo výřešít
         SPI_SendData(tx_buf[z]);
         while (SPI_GetFlagStatus(SPI_FLAG_RXNE) == RESET) // Wait until response
             ;
@@ -113,4 +136,4 @@ uint8_t pn532_read_data(uint8_t *data, uint8_t len2)
     }
     CS_H;
     return len_received;
-// }git
+}
