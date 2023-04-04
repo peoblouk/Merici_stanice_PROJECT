@@ -23,6 +23,11 @@ Security system
 - Vytvoření funkční aplikace s programem pro vybraný mikrokontroler
 - Vytvoření prezentace (dle pravidel), odevzdání tisknuté dokumentace a zaslání emailu s kompletním výpisem programu nebo zasláním odkazu na repositář na GitHubu
 
+# PN532 frame
+
+- zdroj: "https://os.mbed.com/forum/mbed/topic/3476/?page=1#comment-17524"
+  <img alt="frame" src="foto/frame.png" align = "center">
+
 # Periferie
 
 - 1x LCD1602 – zobrazovací periferie (sběrnice I2C)
