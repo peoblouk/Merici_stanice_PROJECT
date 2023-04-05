@@ -18,8 +18,7 @@ Security system
 
 # Zadání
 
-- Na univerzální desce plošných spojů sestrojte přístupové zařízení, které by šlo implementovat třeba pro přístup do objektu
-- Pro přístup do systému musí uživatel přiložit čip nebo tag na RFID čtečku karet, která mu umožní přístup do systému, pokud se autorizace uživatele povede rozsvítí informační zelená LED a na displeji se vypíše jméno uživatele, které bude předem definované, v opačném případě se rozsvítí červená LED a na displeji se zobrazí přístup odmítnut
+- Na univerzální desce plošných spojů sestrojte zařízení, které bude přijimat teploty přes I2C komunikaci a bude
 - Vytvoření funkční aplikace s programem pro vybraný mikrokontroler
 - Vytvoření prezentace (dle pravidel), odevzdání tisknuté dokumentace a zaslání emailu s kompletním výpisem programu nebo zasláním odkazu na repositář na GitHubu
 
