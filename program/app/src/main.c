@@ -11,12 +11,15 @@
 #define LED_PIN_GREEN GPIO_PIN_2
 #define LED_PIN_RED GPIO_PIN_3
 
+#define TEPLOMER1 0x49
+#define TEPLOMER2 0x4A
+#define TEPLOMER3 0x4B
+
 //! Proměnné
-bool Status = FALSE; // Proměnná pro kontrolu stavu systému
-// uint8_t CardID[5];                                                  // Proměnná pro uložení přečteného UID z karty
-uint16_t *encoder_position = 0; // Proměnná pro sledování pozice enkodéru
-uint16_t mtime_key = 0;         // Proměnná pro millis
+uint16_t mtime_key = 0; // Proměnná pro millis
 char buffer[48];
+
+float teplomer1, teplomer2, teplomer3;
 
 //! Uživatelské funkce
 void setup(void)
@@ -25,43 +28,41 @@ void setup(void)
     delay_init();                                                // Incializace časovače TIM4
     init_milis();                                                // Iniciaizace millis TIM2
     GPIO_Init(LED_PORT, LED_PIN_RED, GPIO_MODE_OUT_PP_LOW_SLOW); // Pin LED RED
-    LCD_I2C_Init(0x27, 16, 2);                                   // Inicializace LCD
-    LCD_I2C_Print("Inicializace...");                            // Úvodní obrazovka na displej
-
+                                                                 // LCD_I2C_Init(0x27, 16, 2);                                   // Inicializace LCD
+                                                                 // LCD_I2C_Print("Inicializace...");                            // Úvodní obrazovka na displej
+    LM75A_Init(TEPLOMER1, TEPLOMER2, TEPLOMER3);                 // Inicilaizace teploměrů
     GPIO_Init(GPIOD, GPIO_PIN_4, GPIO_MODE_OUT_PP_LOW_SLOW);
     GPIO_Init(LED_PORT, LED_PIN_GREEN, GPIO_MODE_OUT_PP_LOW_SLOW); // PIN Inicializace proběhla úspěšně
     GPIO_WriteHigh(LED_PORT, LED_PIN_RED);                         // Konec inicializace
     delay_ms(1500);
     GPIO_WriteHigh(LED_PORT, LED_PIN_GREEN);
     GPIO_WriteLow(LED_PORT, LED_PIN_RED);
-    LCD_I2C_Clear();
+    // LCD_I2C_Clear();
 }
 
 //! Main program loop
 int main(void)
 {
     setup(); // Inicializace všech periferií
-
-    while (Status == TRUE)
+             // LCD_I2C_SetCursor(0, 0);  // Nastavení kurzoru
+             // LCD_I2C_Print("Teplota"); // Úvodní obrazovka na displej
+    // LCD_I2C_Init(0x27, 16, 2); // Inicializace LCD
+    while (1)
     {
-        if ((get_milis() - mtime_key) > 500) // každých 500 ms
-        {
-            LCD_I2C_SetCursor(0, 0);    // Nastavení kurzoru
-            LCD_I2C_Print("Prihlasen"); // Úvodní obrazovka na displej
-        }
-    }
+        teplomer1 = LM75A_getdata(TEPLOMER2);
+        // delay_ms(1000);
 
-    while (Status == FALSE)
-    {
-        // LCD_I2C_Clear();
-        if ((get_milis() - mtime_key) > 1500) // každých 1500 ms
-        {
-            mtime_key = get_milis();  // milis now
-            LCD_I2C_SetCursor(0, 0);  // Nastavení kurzoru
-            LCD_I2C_Print("Teplota"); // Úvodní obrazovka na displej
+        delay_ms(1000);
 
-            uint8_t data_len = pn532_read_data(data, MAX_FRAME_LEN);
-            LCD_I2C_Print(frame);
-        }
+        // if ((get_milis() - mtime_key) > 1500)        // každých 1500 ms
+        // {
+        //     mtime_key = get_milis(); // milis now
+        // GPIO_WriteReverse(GPIOD, GPIO_PIN_4);
+
+        // teplomer1 = LM75A_GetTemperature(TEPLOMER1);
+
+        // LCD_I2C_SetCursor(0, 1); // Nastavení kurzoru
+        // sprintf(buffer, "T1= %.1f", teplomer1);
+        // LCD_I2C_Print(buffer);}
     }
 }

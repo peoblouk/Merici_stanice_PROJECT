@@ -24,3 +24,4 @@
 -x _TIM4_UPD_OVF_IRQHandler
 
 -x _LCD_I2C_Home
+-x _get_temperature_c
