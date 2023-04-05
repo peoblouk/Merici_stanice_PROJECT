@@ -2,8 +2,8 @@
  * @author [Petr Oblouk]
  * @github [https://github.com/peoblouk]
  * @create date 05-04-2023 - 15:30:49
- * @modify date 05-04-2023 - 15:30:49
- * @desc [description]
+ * @modify date 05-04-2023 - 23:36:03
+ * @desc [LM75A I2C]
  */
 
 #ifndef __LM75A_I2C_H
@@ -26,6 +26,5 @@
 
 void LM75A_Init(uint8_t address1, uint8_t address2, uint8_t address3);
 int16_t LM75A_getdata(uint8_t adress_of_lm);
-float LM75A_GetTemperature(uint8_t address);
 
 #endif
