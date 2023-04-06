@@ -1,7 +1,7 @@
 <!-- @format -->
 
 <h1 align="center">
-Security system
+Měřící stanice
 <img alt="první pohled" src="foto/first_look.jpeg" align = "left">
 <img alt="druhý pohled" src="foto/second_look.jpeg" align = "right">
 
@@ -18,7 +18,7 @@ Security system
 
 # Zadání
 
-- Na univerzální desce plošných spojů sestrojte zařízení, které bude přijimat teploty přes I2C komunikaci
+- Na univerzální desce plošných spojů sestrojte zařízení, které bude přijímat teploty přes I2C sběrnici
 - Vytvoření funkční aplikace s programem pro vybraný mikrokontroler
 - Vytvoření shield modulo pro desku DeroBoard
 - Vytvoření prezentace (dle pravidel), odevzdání tisknuté dokumentace a zaslání emailu s kompletním výpisem programu nebo zasláním odkazu na repositář na GitHubu
@@ -33,6 +33,7 @@ Security system
 - 1x PCF8574 – převodník na I2C pro zobrazovací periferii
 - 3x CJMCU-75A - teploměr přes I2C
   <img alt="periferie" src="foto/periferie.jpeg" align = "right">
+  <img alt="periferie" src="foto/periferie2.jpeg" align = "right">
 
 # Obrázky
 
