@@ -6,7 +6,7 @@ Security system
 <img alt="druhý pohled" src="foto/second_look.jpeg" align = "right">
 
 </h1>
-<img alt="schéma" src="dokumenty/schema.jpg" align = "center">
+<img alt="schéma" src="schémata/merici_stanice/schema.jpg" align = "center">
 
 - [Zadání projektu](#Zadani)
 - [Periférie](#Periferie)
@@ -18,20 +18,20 @@ Security system
 
 # Zadání
 
-- Na univerzální desce plošných spojů sestrojte zařízení, které bude přijimat teploty přes I2C komunikaci a bude
+- Na univerzální desce plošných spojů sestrojte zařízení, které bude přijimat teploty přes I2C komunikaci
 - Vytvoření funkční aplikace s programem pro vybraný mikrokontroler
+- Vytvoření shield modulo pro desku DeroBoard
 - Vytvoření prezentace (dle pravidel), odevzdání tisknuté dokumentace a zaslání emailu s kompletním výpisem programu nebo zasláním odkazu na repositář na GitHubu
 
-# PN532 frame
+# LM75A I2C read frame
 
-- ZDROJ: `https://os.mbed.com/forum/mbed/topic/3476/?page=1#comment-17524`
   <img alt="frame" src="zdroje/frame.png" align = "center">
 
 # Periferie
 
 - 1x LCD1602 – zobrazovací periferie (sběrnice I2C)
 - 1x PCF8574 – převodník na I2C pro zobrazovací periferii
-- 1x RFID-PN532 – čtečka přístupových karet (sběrnice SPI)
+- 3x CJMCU-75A - teploměr přes I2C
   <img alt="periferie" src="foto/periferie.jpeg" align = "right">
 
 # Obrázky

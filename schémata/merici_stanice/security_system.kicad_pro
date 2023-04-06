@@ -333,7 +333,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "security-system-2.0.kicad_pro",
+    "filename": "security_system.kicad_pro",
     "version": 1
   },
   "net_settings": {
@@ -404,7 +404,7 @@
       "workbook_filename": ""
     },
     "page_layout_descr_file": "",
-    "plot_directory": "",
+    "plot_directory": "./",
     "spice_adjust_passive_values": false,
     "spice_external_command": "spice \"%I\"",
     "subpart_first_id": 65,
@@ -412,7 +412,7 @@
   },
   "sheets": [
     [
-      "0e77503f-18b2-4451-a4aa-1bb3bd0a1c7c",
+      "78126af1-cd1f-4a62-bba4-fd9e2fbb94b6",
       ""
     ]
   ],
