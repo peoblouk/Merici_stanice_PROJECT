@@ -28,7 +28,7 @@ void init_milis(void)
     TIM2_ITConfig(TIM2_IT_UPDATE, ENABLE);
     ITC_SetSoftwarePriority(ITC_IRQ_TIM2_OVF, ITC_PRIORITYLEVEL_2); // nÍzká priorita přerušení
     TIM2_Cmd(ENABLE);
-    // enableInterrupts();
+    enableInterrupts();
 }
 
 // milis interrupt routine

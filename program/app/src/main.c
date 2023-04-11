@@ -14,8 +14,6 @@
 #define TEPLOMER2 0x4A
 #define TEPLOMER3 0x4B
 
-//! Proměnné
-uint16_t mtime_key = 0; // Proměnná pro millis
 ////////////////////////////////////////////////////////////////////
 //! Uživatelské funkce
 void setup(void)
@@ -39,33 +37,31 @@ void setup(void)
 //! Main program loop
 int main(void)
 {
-    float teplomer1;
-    float *teplota[3];
-
-    char zobraz[3] = {"pokoj1", "pokoj2", "venku"};
+    //? Lokální proměnné
+    uint8_t temperature_data[2]; // Proměnná pro uložení teploty
+    // char prostredi[3] = {"pokoj1", "pokoj2", "venku"}; // Proměnná pro prostředí
+    uint16_t mtime_key = 0;                                // Proměnná pro millis
+    uint8_t adresy[3] = {TEPLOMER1, TEPLOMER2, TEPLOMER3}; // Proměnná pro skladování adres
+    uint8_t cislo = 0;
 
     setup();                    // Inicializace všech periferií
     LCD_I2C_SetCursor(0, 0);    // Nastavení kurzoru
     LCD_I2C_Print("Teplota :"); // Úvodní obrazovka na displej
     while (1)
     {
-
         char buffer[48];
-        // teplomer1 = LM75A_Temperature(TEPLOMER1);
-
         if ((get_milis() - mtime_key) > 1500) // každých 1500 ms
         {
-            mtime_key = get_milis(); // milis now
-            teplota[0] = LM75A_Temperature(TEPLOMER1);
-            teplota[1] = LM75A_Temperature(TEPLOMER2);
-            teplota[2] = LM75A_Temperature(TEPLOMER3);
+            mtime_key = get_milis();                                                   // Milis now
+            LM75A_ReadTemperature((adresy[0]), temperature_data);                      // Čtení teploty
+            LCD_I2C_SetCursor(0, 1);                                                   // Nastavení kurzoru
+            sprintf(buffer, "T1 = %d.%d C", temperature_data[0], temperature_data[1]); // Zformátování stringu // todo  >> 5
+            GPIO_WriteReverse(GPIOD, GPIO_PIN_4);
         }
-
-        LCD_I2C_SetCursor(0, 1); // Nastavení kurzoru
-        sprintf(buffer, "%s = %.1f C", zobraz[0], teplomer1);
-        LCD_I2C_Print(buffer);
-        delay_ms(500);
-        GPIO_WriteReverse(GPIOD, GPIO_PIN_4);
+        if (cislo == 3)
+        {
+            cislo = 0;
+        }
     }
 }
 ////////////////////////////////////////////////////////////////////

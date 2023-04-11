@@ -12,6 +12,8 @@
 #include "stm8s.h"
 #include "delay.h"
 
+int msb, lsb;
+
 // LM75A registers
 #define LM75A_TEMP_REG 0x00 // Temperature register - (Read only) two 8-bit data
 #define LM75A_CONF_REG 0x01 // Configuration register - (Read / Write) single 8-bit, default =0
@@ -26,12 +28,6 @@
 
 ///////////////////// PUBLIC FUNCTIONS //////////////////////////////
 /**
- * @brief  Převod teploty na float.
- * @param  address : Adresa slave zařízení, pro které jde požadavek.
- * @retval Float teplota
- */
-float LM75A_Temperature(uint8_t address); // Decode temperature
-/**
  * @brief  Inicializace teploměrů.
  * @param  address1 : Adresa prvního slave zařízení.
  * @param  address2 : Adresa druhého slave zařízení.
@@ -44,9 +40,17 @@ void LM75A_Init(uint8_t address1, uint8_t address2, uint8_t address3);
 /**
  * @brief  I2C čtení z registrů a hrubé zpracování teploty.
  * @param  adress_of_lm : Adresa slave zařízení, pro které jde požadavek.
- * @retval RAW data teploty
+ * @param  msb_ : Proměnná, kde hodláme uložit hodnotu z čtení MSB.
+ * @param  lsb_: Proměnná, kde hodláme uložit hodnotu z čtení LSB.
+ * @retval None
  */
-int16_t LM75A_ReadRegister(uint8_t adress_of_lm);
+void LM75A_ReadTemperature(uint8_t adress_of_lm, uint8_t *data);
 ////////////////////////////////////////////////////////////////////
 
+/**
+ * @brief  Převod teploty na float.
+ * @param  address : Adresa slave zařízení, pro které jde požadavek.
+ * @retval Float teplota
+ */
+// int LM75A_Temperature(uint8_t address); // Decode temperature
 #endif
