@@ -40,7 +40,7 @@ float LM75A_Temperature(uint8_t address); // Decode temperature
  */
 void LM75A_Init(uint8_t address1, uint8_t address2, uint8_t address3);
 ////////////////////////////////////////////////////////////////////
-///////////////////// PRIVATEFUNCTIONS /////////////////////////////
+///////////////////// PRIVATE FUNCTIONS ////////////////////////////
 /**
  * @brief  I2C čtení z registrů a hrubé zpracování teploty.
  * @param  adress_of_lm : Adresa slave zařízení, pro které jde požadavek.
