@@ -50,17 +50,22 @@ int main(void)
     while (1)
     {
         char buffer[48];
-        if ((get_milis() - mtime_key) > 1500) // každých 1500 ms
+
+        if ((get_milis() - mtime_key) > 3000) // každých 1500 ms
         {
-            mtime_key = get_milis();                                                   // Milis now
-            LM75A_ReadTemperature((adresy[0]), temperature_data);                      // Čtení teploty
-            LCD_I2C_SetCursor(0, 1);                                                   // Nastavení kurzoru
-            sprintf(buffer, "T1 = %d.%d C", temperature_data[0], temperature_data[1]); // Zformátování stringu // todo  >> 5
+            mtime_key = get_milis();                                  // Milis now
+            LM75A_ReadTemperature((adresy[cislo]), temperature_data); // Čtení teploty
             GPIO_WriteReverse(GPIOD, GPIO_PIN_4);
-        }
-        if (cislo == 3)
-        {
-            cislo = 0;
+            delay_ms(20);
+            GPIO_WriteReverse(GPIOD, GPIO_PIN_4);
+            LCD_I2C_SetCursor(0, 1);                                                               // Nastavení kurzoru
+            sprintf(buffer, "T%d = %d.%d C", cislo + 1, temperature_data[0], temperature_data[1]); // Zformátování stringu // todo  >> 5
+            LCD_I2C_Print(buffer);
+            cislo++;
+            if (cislo >= 3)
+            {
+                cislo = 0;
+            }
         }
     }
 }
