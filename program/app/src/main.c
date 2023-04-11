@@ -2,7 +2,6 @@
 #include "delay.h"
 #include "LCD_I2C.h"
 #include "milis.h"
-#include <string.h>
 #include "lm75a.h"
 
 //! Makra
@@ -17,7 +16,6 @@
 
 //! Proměnné
 uint16_t mtime_key = 0; // Proměnná pro millis
-// char buffer[48];
 
 //! Uživatelské funkce
 void setup(void)
@@ -28,7 +26,7 @@ void setup(void)
     GPIO_Init(LED_PORT, LED_PIN_RED, GPIO_MODE_OUT_PP_LOW_SLOW); // Pin LED RED
     LCD_I2C_Init(0x27, 16, 2);                                   // Inicializace LCD
     LCD_I2C_Print("Inicializace...");                            // Úvodní obrazovka na displej
-    LM75A_Init(TEPLOMER1, TEPLOMER2, TEPLOMER3);                 // Inicilaizace teploměrů
+    LM75A_Init(TEPLOMER1, TEPLOMER2, TEPLOMER3);                 // Inicializace teploměrů
     GPIO_Init(GPIOD, GPIO_PIN_4, GPIO_MODE_OUT_PP_LOW_SLOW);
     GPIO_Init(LED_PORT, LED_PIN_GREEN, GPIO_MODE_OUT_PP_LOW_SLOW); // PIN Inicializace proběhla úspěšně
     GPIO_WriteHigh(LED_PORT, LED_PIN_RED);                         // Konec inicializace
@@ -52,17 +50,16 @@ int main(void)
 
         char buffer[48];
 
-        // teplomer2 = LM75A_Temperature(TEPLOMER2);
-        // teplomer3 = LM75A_Temperature(TEPLOMER3);
+        teplomer2 = LM75A_Temperature(TEPLOMER2);
+        teplomer3 = LM75A_Temperature(TEPLOMER3);
 
-        char teploty[3] = {teplomer1, teplomer2, teplomer3};
         // if ((get_milis() - mtime_key) > 1500) // každých 1500 ms
         // {
         // mtime_key = get_milis(); // milis now
         GPIO_WriteReverse(GPIOD, GPIO_PIN_4);
 
         LCD_I2C_SetCursor(0, 1); // Nastavení kurzoru
-        LM75A_Temperature(TEPLOMER1);
+        teplomer1 = LM75A_Temperature(TEPLOMER1);
         sprintf(buffer, "T1= %.1f C", teplomer1);
         LCD_I2C_Print(buffer);
 
