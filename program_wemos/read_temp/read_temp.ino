@@ -56,6 +56,10 @@ void loop() {
     }
     uint8_t msb = serial.read();
     uint8_t lsb = serial.read();
+
+    Serial.println(msb);
+    Serial.println("\n");
+    Serial.println(lsb);
     temperature_data = (msb << 8) | lsb;
 
     // Convert temperature data to degrees Celsius
