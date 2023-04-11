@@ -7,7 +7,7 @@
  */
 
 #include "lm75a.h"
-
+////////////////////////////////////////////////////////////////////
 void LM75A_Init(uint8_t address1, uint8_t address2, uint8_t address3)
 {
     I2C_DeInit();
@@ -21,7 +21,7 @@ void LM75A_Init(uint8_t address1, uint8_t address2, uint8_t address3)
 
     delay_ms(500);
 }
-
+////////////////////////////////////////////////////////////////////
 // Read temperature data from LM75A
 int16_t LM75A_ReadRegister(uint8_t adress_of_lm)
 {
@@ -57,10 +57,9 @@ int16_t LM75A_ReadRegister(uint8_t adress_of_lm)
     data_lm75a[1] = I2C_ReceiveData(); // Ulož LSByte data do proměnné
 
     ////
+    //! Example ((temp_hi << 8) | temp_lo) >> 5
     // msb_temp = (data_lm75a[0] << 3); // First eight bits contain Temperature
     // lsb_temp = (data_lm75a[1] >> 5); // Another 3 bits contain Temperature in tens
-
-    // temp = msb_temp | lsb_temp;
 
     // 1011 1000
     // 0000 0011
@@ -73,11 +72,12 @@ int16_t LM75A_ReadRegister(uint8_t adress_of_lm)
     temp >>= 5;        // ZahoĎ posledních 5 bitů (Rozlišení = 0.125 degrees Celsius)
     if (temp & 0x0400) // Zkontroluj zda je teplota negativitní
     {
-        temp |= 0xF800; // sign-extend temperature value
+        temp |= 0xF800;
     }
+
     return temp;
 }
-
+////////////////////////////////////////////////////////////////////
 float LM75A_Temperature(uint8_t address)
 {
     float lm75a_temp;

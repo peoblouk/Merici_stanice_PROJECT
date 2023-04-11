@@ -24,8 +24,29 @@
 #define LM75A_CONF_COMP 0x04
 #define LM75A_CONF_POL 0x08
 
-void LM75A_Init(uint8_t address1, uint8_t address2, uint8_t address3);
-int16_t LM75A_ReadRegister(uint8_t adress_of_lm);
+///////////////////// PUBLIC FUNCTIONS //////////////////////////////
+/**
+ * @brief  Převod teploty na float.
+ * @param  address : Adresa slave zařízení, pro které jde požadavek.
+ * @retval Float teplota
+ */
 float LM75A_Temperature(uint8_t address); // Decode temperature
+/**
+ * @brief  Inicializace teploměrů.
+ * @param  address1 : Adresa prvního slave zařízení.
+ * @param  address2 : Adresa druhého slave zařízení.
+ * @param  address3 : Adresa třetího slave zařízení.
+ * @retval None
+ */
+void LM75A_Init(uint8_t address1, uint8_t address2, uint8_t address3);
+////////////////////////////////////////////////////////////////////
+///////////////////// PRIVATEFUNCTIONS /////////////////////////////
+/**
+ * @brief  I2C čtení z registrů a hrubé zpracování teploty.
+ * @param  adress_of_lm : Adresa slave zařízení, pro které jde požadavek.
+ * @retval RAW data teploty
+ */
+int16_t LM75A_ReadRegister(uint8_t adress_of_lm);
+////////////////////////////////////////////////////////////////////
 
 #endif
