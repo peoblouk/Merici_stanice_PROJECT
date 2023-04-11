@@ -3,6 +3,8 @@
 #include "LCD_I2C.h"
 #include "milis.h"
 #include "lm75a.h"
+#include "uart_bridge.h"
+#include <string.h>
 ////////////////////////////////////////////////////////////////////
 //! Makra
 // Indikační LED
@@ -21,6 +23,7 @@ void setup(void)
     CLK_HSIPrescalerConfig(CLK_PRESCALER_HSIDIV1);
     delay_init();                                                // Incializace časovače TIM4
     init_milis();                                                // Iniciaizace millis TIM2
+    uart_init();                                                 // Iniciaizace UART
     GPIO_Init(LED_PORT, LED_PIN_RED, GPIO_MODE_OUT_PP_LOW_SLOW); // Pin LED RED
     LCD_I2C_Init(0x27, 16, 2);                                   // Inicializace LCD
     LCD_I2C_Print("Inicializace...");                            // Úvodní obrazovka na displej
@@ -55,6 +58,7 @@ int main(void)
         {
             mtime_key = get_milis();                                  // Milis now
             LM75A_ReadTemperature((adresy[cislo]), temperature_data); // Čtení teploty
+            uart_send(temperature_data, sizeof(temperature_data));
             GPIO_WriteReverse(GPIOD, GPIO_PIN_4);
             delay_ms(20);
             GPIO_WriteReverse(GPIOD, GPIO_PIN_4);
