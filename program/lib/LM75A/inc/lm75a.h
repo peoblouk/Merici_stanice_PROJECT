@@ -12,8 +12,6 @@
 #include "stm8s.h"
 #include "delay.h"
 
-int msb, lsb;
-
 // LM75A registers
 #define LM75A_TEMP_REG 0x00 // Temperature register - (Read only) two 8-bit data
 #define LM75A_CONF_REG 0x01 // Configuration register - (Read / Write) single 8-bit, default =0
