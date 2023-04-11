@@ -13,10 +13,10 @@
 #include "delay.h"
 
 // LM75A registers
-#define LM75A_TEMP_REG 0x00
-#define LM75A_CONF_REG 0x01
-#define LM75A_THYS_REG 0x02
-#define LM75A_TOS_REG 0x03
+#define LM75A_TEMP_REG 0x00 // Temperature register - (Read only) two 8-bit data
+#define LM75A_CONF_REG 0x01 // Configuration register - (Read / Write) single 8-bit, default =0
+#define LM75A_THYS_REG 0x02 // Hysteresis register - (Read / Write) two 8-bit, default = 75 °C
+#define LM75A_TOS_REG 0x03  // Overtemperature shutdown threshold register (Read / Write) two 8-bit, default = 80 °C
 
 // LM75A configuration bits
 #define LM75A_CONF_SD 0x01
@@ -25,6 +25,7 @@
 #define LM75A_CONF_POL 0x08
 
 void LM75A_Init(uint8_t address1, uint8_t address2, uint8_t address3);
-int16_t LM75A_getdata(uint8_t adress_of_lm);
+int16_t LM75A_ReadRegister(uint8_t adress_of_lm);
+float LM75A_Temperature(uint8_t address); // Decode temperature
 
 #endif

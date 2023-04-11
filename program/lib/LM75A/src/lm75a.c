@@ -8,14 +8,9 @@
 
 #include "lm75a.h"
 
-char dataBuffer[8];
-
 void LM75A_Init(uint8_t address1, uint8_t address2, uint8_t address3)
 {
     I2C_DeInit();
-
-    // uint8_t _address1 = address1 << 1;
-    // CLK_PeripheralClockConfig(CLK_PERIPHERAL_I2C, ENABLE);
     GPIO_Init(GPIOB, GPIO_PIN_5, GPIO_MODE_OUT_PP_HIGH_FAST);
     GPIO_Init(GPIOB, GPIO_PIN_4, GPIO_MODE_OUT_PP_HIGH_FAST);
 
@@ -28,10 +23,11 @@ void LM75A_Init(uint8_t address1, uint8_t address2, uint8_t address3)
 }
 
 // Read temperature data from LM75A
-int16_t LM75A_getdata(uint8_t adress_of_lm)
+int16_t LM75A_ReadRegister(uint8_t adress_of_lm)
 {
-    uint8_t data[2];
-
+    uint8_t data_lm75a[2];
+    int16_t temp;
+    float temperature;
     uint8_t _address_of_lm = adress_of_lm << 1; // Přepočet na 7bit
 
     I2C_GenerateSTART(ENABLE); // Vygeneruj start
@@ -53,17 +49,41 @@ int16_t LM75A_getdata(uint8_t adress_of_lm)
         ;
     while (!I2C_CheckEvent(I2C_EVENT_MASTER_BYTE_RECEIVED))
         ;
-    data[0] = I2C_ReceiveData();    // Ulož MSB data do proměnné
-    I2C_AcknowledgeConfig(DISABLE); // Vypni zpětnou odezvu
-    I2C_GenerateSTOP(ENABLE);       // Vygeneruj stop
+    data_lm75a[0] = I2C_ReceiveData(); // Ulož MSByte data do proměnné
+    I2C_AcknowledgeConfig(DISABLE);    // Vypni zpětnou odezvu
+    I2C_GenerateSTOP(ENABLE);          // Vygeneruj stop
     while (!I2C_CheckEvent(I2C_EVENT_MASTER_BYTE_RECEIVED))
         ;
-    data[1] = I2C_ReceiveData(); // Ulož LSB data do proměnné
+    data_lm75a[1] = I2C_ReceiveData(); // Ulož LSByte data do proměnné
 
-    int16_t temp = ((data[0] << 8) | data[1]) >> 5; // převod teploty na int
-    if (temp & 0x0400)
+    ////
+    // msb_temp = (data_lm75a[0] << 3); // First eight bits contain Temperature
+    // lsb_temp = (data_lm75a[1] >> 5); // Another 3 bits contain Temperature in tens
+
+    // temp = msb_temp | lsb_temp;
+
+    // 1011 1000
+    // 0000 0011
+    // --------- OR
+    // 1011 1011
+    /////
+
+    // Decode temperature data
+    temp = (int16_t)((data_lm75a[0] << 8) | data_lm75a[1]);
+    temp >>= 5;        // ZahoĎ posledních 5 bitů (Rozlišení = 0.125 degrees Celsius)
+    if (temp & 0x0400) // Zkontroluj zda je teplota negativitní
     {
-        temp |= 0xF800;
+        temp |= 0xF800; // sign-extend temperature value
     }
     return temp;
+}
+
+float LM75A_Temperature(uint8_t address)
+{
+    float lm75a_temp;
+    int temperatur = LM75A_ReadRegister(address);
+
+    lm75a_temp = (float)temperatur / 8.0;
+
+    return lm75a_temp;
 }
