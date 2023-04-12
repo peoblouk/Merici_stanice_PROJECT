@@ -41,8 +41,7 @@ void setup(void)
 int main(void)
 {
     //? Lokální proměnné
-    uint8_t temperature_data[2]; // Proměnná pro uložení teploty
-    // char prostredi[3] = {"pokoj1", "pokoj2", "venku"}; // Proměnná pro prostředí
+    uint8_t temperature_data[2];                           // Proměnná pro uložení teploty
     uint16_t mtime_key = 0;                                // Proměnná pro millis
     uint8_t adresy[3] = {TEPLOMER1, TEPLOMER2, TEPLOMER3}; // Proměnná pro skladování adres
     uint8_t cislo = 0;
@@ -69,6 +68,14 @@ int main(void)
             if (cislo >= 3)
             {
                 cislo = 0;
+            }
+            if (temperature_data[0] >= 20) // Pokud je teplota větší jak 20 stupňů tak rozstviť LED
+            {
+                GPIO_WriteLow(LED_PORT, LED_PIN_GREEN);
+            }
+            else
+            {
+                GPIO_WriteLow(LED_PORT, LED_PIN_GREEN);
             }
         }
     }
