@@ -33,7 +33,6 @@ void setup(void)
     GPIO_WriteHigh(LED_PORT, LED_PIN_RED);                         // Konec inicializace
     delay_ms(1500);
     GPIO_WriteHigh(LED_PORT, LED_PIN_GREEN);
-    GPIO_WriteLow(LED_PORT, LED_PIN_RED);
     LCD_I2C_Clear();
 }
 ////////////////////////////////////////////////////////////////////
@@ -68,6 +67,9 @@ int main(void)
             if (cislo >= 3)
             {
                 cislo = 0;
+                GPIO_WriteLow(LED_PORT, LED_PIN_RED);
+                delay_ms(50);
+                GPIO_WriteHigh(LED_PORT, LED_PIN_RED);
             }
             if (temperature_data[0] >= 20) // Pokud je teplota větší jak 20 stupňů tak rozstviť LED
             {
@@ -75,7 +77,7 @@ int main(void)
             }
             else
             {
-                GPIO_WriteLow(LED_PORT, LED_PIN_GREEN);
+                GPIO_WriteHigh(LED_PORT, LED_PIN_GREEN);
             }
         }
     }
