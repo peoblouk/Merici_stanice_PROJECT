@@ -10,6 +10,7 @@
         "stdio.h": "c",
         "lm75a.h": "c",
         "delay.h": "c",
-        "lcd_i2c.h": "c"
+        "lcd_i2c.h": "c",
+        "uart_bridge.h": "c"
     }
 }

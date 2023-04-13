@@ -4,7 +4,6 @@
 #include "milis.h"
 #include "lm75a.h"
 #include "uart_bridge.h"
-// #include <string.h>
 ////////////////////////////////////////////////////////////////////
 //! Makra
 // Indikační LED
