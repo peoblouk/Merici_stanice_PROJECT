@@ -54,7 +54,7 @@ void LM75A_ReadTemperature(uint8_t adress_of_lm, uint8_t *data)
         ;
     data[1] = I2C_ReceiveData(); // Ulož LSByte data do proměnné
 
-    temp = ((data[0] << 8) | data[1]) >> 5; // převod teploty na int
+    temp = ((data[0] << 8) | data[1]) >> 5; // Převod teploty na int
     if (temp & 0x0400)
     {
         temp |= 0xF800;
@@ -63,53 +63,8 @@ void LM75A_ReadTemperature(uint8_t adress_of_lm, uint8_t *data)
     data[0] = (temp / 10); // MSBytes
     data[1] = (temp % 10); // LSBytes
 
+    // If you want output as float
     // data[0] = msb;
     // data[1] = lsb;
 }
 ////////////////////////////////////////////////////////////////////
-/*
-char LM75A_Temperature(uint8_t address)
-{
-    char temp_str[12];
-    int temperatur = LM75A_ReadRegister(address);
-
-    // lm75a_temp = (float)temperatur / 8.0;
-
-    sprintf(temp_str, "%d.%d", temperatur, (temperatur / 8));
-
-    return lm75a_temp;
-}
-
- */
-////
-//! Example ((temp_hi << 8) | temp_lo) >> 5
-// Decode temperature data
-
-// msb_temp = (data_lm75a[0] << 3); // First eight bits contain Temperature
-// lsb_temp = (data_lm75a[1] >> 5); // Another 3 bits contain Temperature in tens
-
-// 1011 1000
-// 0000 0011
-// --------- OR
-// 1011 1011
-/////
-
-// temp = ((data_lm75a[0] << 8) | data_lm75a[1]);
-// temp >>= 5;        // ZahoĎ posledních 5 bitů (Rozlišení = 0.125 degrees Celsius)
-
-// temp = uint16_t(((data[0] << 8) | data[1]));
-// temp >>= 5; // discard 5 least significant bits (resolution = 0.125 degrees Celsius)
-// if (temp & 0x0400)
-// {                   // check if temperature is negative
-//     temp |= 0xF800; // sign-extend temperature value
-// }
-
-/* // Store temperature data (MSB and LSB) in output buffer
-// data[0] = ((temp >> 8) & 0xFF);
-// data[1] = (temp & 0xFF); // (uint8_t)
-
-int16_t temp = ((data[0] << 8) | data[1]) >> 5; // převod teploty na int
-if (temp & 0x0400)
-{
-    temp |= 0xF800;
- */
