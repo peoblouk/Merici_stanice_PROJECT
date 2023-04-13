@@ -27,6 +27,14 @@ Měřící stanice
 
   <img alt="frame" src="zdroje/frame.png" align = "center">
 
+# Blokové schéma
+
+  <img alt="frame" src="foto/blokové_schema.png" align = "center">
+
+# Vývojový diagram kodu
+
+  <img alt="frame" src="foto/blokovy_diagram_kodu.png" align = "center">
+
 # Periferie
 
 - 1x LCD1602 – zobrazovací periferie (sběrnice I2C)
